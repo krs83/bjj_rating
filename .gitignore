@@ -3,5 +3,5 @@
 .idea/
 bjj_rating.iml
 venv
-
+__pycache__/
 
