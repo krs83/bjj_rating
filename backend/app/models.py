@@ -2,6 +2,10 @@ from datetime import date
 
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
 
+class AthleteTournamentLink(SQLModel, table=True):
+    athlete_id: int | None = Field(default=None, foreign_key='athlete.id', primary_key=True)
+    tournament_id: int | None = Field(default=None, foreign_key='tournament.id', primary_key=True)
+
 
 class Athlete(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -13,7 +17,7 @@ class Athlete(SQLModel, table=True):
     points: int = Field(default=0, ge=0)
 
     tournaments: list["Tournament"] = Relationship(back_populates='athletes',
-                                                   link_model='AthleteTournamentLink')
+                                                   link_model=AthleteTournamentLink)
 
 
 class Tournament(SQLModel, table=True):
@@ -23,5 +27,5 @@ class Tournament(SQLModel, table=True):
     smoothcomp_date: date = Field(sa_column=Column(Date))
 
     athletes: list[Athlete] = Relationship(back_populates='tournaments',
-                                             link_model='AthleteTournamentLink')
+                                             link_model=AthleteTournamentLink)
 
