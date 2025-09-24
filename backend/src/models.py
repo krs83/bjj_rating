@@ -1,6 +1,7 @@
 from datetime import date
 
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
+from pydantic import ConfigDict
 
 class AthleteTournamentLink(SQLModel, table=True):
     athlete_id: int | None = Field(default=None, foreign_key='athlete.id', primary_key=True)
@@ -29,3 +30,9 @@ class Tournament(SQLModel, table=True):
     athletes: list[Athlete] = Relationship(back_populates='tournaments',
                                              link_model=AthleteTournamentLink)
 
+
+class AthleteResponse(SQLModel):
+    id: int
+    fullname: str
+
+    model_config = ConfigDict(from_attributes=True)

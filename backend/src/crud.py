@@ -1,15 +1,18 @@
 from sqlmodel import select, col
-from backend.src.models import Athlete, Tournament
-from backend.src.dependecies import DBSes
+from backend.src.models import Athlete, Tournament, AthleteResponse
+from backend.src.dependencies import DBSes
+
 
 #Athlete crud
-async def get_athletes(db: DBSes, offset: int = 0, limit: int = 50):
+async def get_athletes(db: DBSes, offset: int, limit: int):
     stmt = select(Athlete).offset(offset).limit(limit)
-    res = db.exec(stmt).all()
-    return res
+    res = await db.exec(stmt)
+    athletes = res.all()
+    athletes = [AthleteResponse.model_validate(athlete) for athlete in athletes]
+    return athletes
 
-async def get_one_athlete(db: DBSes, athlete_id: int):
-    stmt = select(Athlete).where(col(Athlete.id == athlete_id))
-    res = db.exec(stmt).first()
-    return res
-
+async def get_athlete(db: DBSes, athlete_id: int):
+    stmt = select(Athlete).where(Athlete.id == athlete_id)
+    res = await db.exec(stmt)
+    athlete = res.one()
+    return athlete
