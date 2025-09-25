@@ -1,5 +1,4 @@
 from datetime import date
-from operator import index
 
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
 from pydantic import ConfigDict
@@ -8,37 +7,28 @@ class AthleteTournamentLink(SQLModel, table=True):
     athlete_id: int | None = Field(default=None, foreign_key='athlete.id', primary_key=True)
     tournament_id: int | None = Field(default=None, foreign_key='tournament.id', primary_key=True)
 
-
-class Athlete(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    place: int | None = Field(default=None)
+class AthleteBase(SQLModel):
     fullname: str = Field(String(50),index=True, nullable=False)
     birth: date = Field(sa_column=Column(Date, index=True))
     city: str = Field(String(50))
     region: str = Field(String(50),index=True, nullable=False)
     points: int | None = Field(index=True, default=None, ge=0)
 
-    tournaments: list["Tournament"] = Relationship(back_populates='athletes',
-                                                   link_model=AthleteTournamentLink)
+class Athlete(AthleteBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    place: int | None = Field(default=None)
 
-class AthleteResponse(SQLModel):
+    tournaments: list["Tournament"] = Relationship(back_populates='athletes',
+                                                      link_model=AthleteTournamentLink)
+
+class AthleteResponse(AthleteBase):
     id: int
-    fullname: str
     place: int
-    fullname: str
-    birth: date
-    city: str
-    region: str
-    points: int
 
     model_config = ConfigDict(from_attributes=True)
 
-class AthleteAdd(SQLModel):
-    fullname: str
-    birth: date
-    city: str
-    region: str
-    points: int
+class AthleteAdd(AthleteBase):
+    pass
 
 class AthletePatch(SQLModel):
     fullname: str | None = None
