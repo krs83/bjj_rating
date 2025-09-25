@@ -20,6 +20,24 @@ class Athlete(SQLModel, table=True):
     tournaments: list["Tournament"] = Relationship(back_populates='athletes',
                                                    link_model=AthleteTournamentLink)
 
+class AthleteResponse(SQLModel):
+    id: int
+    fullname: str
+    place: int
+    fullname: str
+    birth: date
+    city: str
+    region: str
+    points: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+class AthleteAdd(SQLModel):
+    fullname: str = Field(String(50),index=True, nullable=False)
+    birth: date = Field(sa_column=Column(Date))
+    city: str = Field(String(50),index=True)
+    region: str = Field(String(50),index=True, nullable=False)
+    points: int
 
 class Tournament(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -30,9 +48,3 @@ class Tournament(SQLModel, table=True):
     athletes: list[Athlete] = Relationship(back_populates='tournaments',
                                              link_model=AthleteTournamentLink)
 
-
-class AthleteResponse(SQLModel):
-    id: int
-    fullname: str
-
-    model_config = ConfigDict(from_attributes=True)
