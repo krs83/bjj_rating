@@ -10,12 +10,12 @@ class AthleteTournamentLink(SQLModel, table=True):
 
 class Athlete(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    place: int = Field(nullable=False)
+    place: int | None = Field(default=None)
     fullname: str = Field(String(50),index=True, nullable=False)
     birth: date = Field(sa_column=Column(Date))
     city: str = Field(String(50),index=True)
     region: str = Field(String(50),index=True, nullable=False)
-    points: int = Field(default=0, ge=0)
+    points: int | None = Field(default=None, ge=0)
 
     tournaments: list["Tournament"] = Relationship(back_populates='athletes',
                                                    link_model=AthleteTournamentLink)
@@ -33,11 +33,18 @@ class AthleteResponse(SQLModel):
     model_config = ConfigDict(from_attributes=True)
 
 class AthleteAdd(SQLModel):
-    fullname: str = Field(String(50),index=True, nullable=False)
-    birth: date = Field(sa_column=Column(Date))
-    city: str = Field(String(50),index=True)
-    region: str = Field(String(50),index=True, nullable=False)
+    fullname: str
+    birth: date
+    city: str
+    region: str
     points: int
+
+class AthletePatch(SQLModel):
+    fullname: str | None = None
+    birth: date | None  = None
+    city: str | None  = None
+    region: str | None  = None
+    points: int | None = None
 
 class Tournament(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
