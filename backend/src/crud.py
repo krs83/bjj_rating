@@ -20,7 +20,9 @@ async def get_athlete(db: DPSes, athlete_id: int):
 
 async def create_athlete(db: DPSes, athlete_data: AthleteAdd):
     athlete = await find_existing_athlete(db, athlete_data)
-    await calculating_place(db)
     db.add(athlete)
+    await db.commit()
+    await db.refresh(athlete)
+    await calculating_place(db)
     await db.commit()
     return athlete_data

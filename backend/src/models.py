@@ -1,4 +1,5 @@
 from datetime import date
+from operator import index
 
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
 from pydantic import ConfigDict
@@ -12,10 +13,10 @@ class Athlete(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     place: int | None = Field(default=None)
     fullname: str = Field(String(50),index=True, nullable=False)
-    birth: date = Field(sa_column=Column(Date))
-    city: str = Field(String(50),index=True)
+    birth: date = Field(sa_column=Column(Date, index=True))
+    city: str = Field(String(50))
     region: str = Field(String(50),index=True, nullable=False)
-    points: int | None = Field(default=None, ge=0)
+    points: int | None = Field(index=True, default=None, ge=0)
 
     tournaments: list["Tournament"] = Relationship(back_populates='athletes',
                                                    link_model=AthleteTournamentLink)
