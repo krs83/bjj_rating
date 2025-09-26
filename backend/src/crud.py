@@ -7,7 +7,7 @@ from backend.src.utility import find_existing_athlete, calculating_place
 
 #Athlete crud
 async def get_athletes(db: DPSes, offset: int, limit: int):
-    stmt = select(Athlete).offset(offset).limit(limit)
+    stmt = select(Athlete).offset(offset).limit(limit).order_by(Athlete.place.asc())
     res = await db.exec(stmt)
     athletes = res.all()
     return athletes
@@ -38,3 +38,11 @@ async def part_update_athlete(db: DPSes, athlete_id:int, athlete_data: AthleteUp
     await calculating_place(db)
     await db.refresh(db_athlete)
     return AthleteResponse.model_validate(db_athlete)
+
+async def delete_athlete(db: DPSes, athlete_id:int):
+    athlete = await db.get(Athlete, athlete_id)
+    # TODO: Проверка на наличие id - if not db_athlete: Exception
+    await db.delete(athlete)
+    await db.commit()
+    await calculating_place(db)
+    return {'ok': True}
