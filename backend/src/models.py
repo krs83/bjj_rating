@@ -30,7 +30,7 @@ class AthleteResponse(AthleteBase):
 class AthleteAdd(AthleteBase):
     pass
 
-class AthletePatch(SQLModel):
+class AthleteUpdate(SQLModel):
     fullname: str | None = None
     birth: date | None  = None
     city: str | None  = None

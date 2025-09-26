@@ -1,7 +1,8 @@
 from sqlmodel import select
-from backend.src.models import Athlete, Tournament, AthleteResponse, AthleteAdd
+from backend.src.models import Athlete, Tournament, AthleteResponse, AthleteAdd, AthleteUpdate
 from backend.src.dependencies import DPSes
 from backend.src.utility import find_existing_athlete, calculating_place
+#TODO: пройтись mypy в конце
 
 
 #Athlete crud
@@ -25,14 +26,13 @@ async def create_athlete(db: DPSes, athlete_data: AthleteAdd):
     await db.commit()
     return athlete_data
 
-# async def part_update_athlete(db: DPSes, athlete_id:int, athlete_data: AthleteAdd, unset=True):
-#     stmt = select(Athlete).where(Athlete.id == athlete_id)
-#     await db.exec(stmt)
-#     db.add(athlete_data.model_dump(exclude_unset=unset))
-#     await db.commit()
-#     return athlete_data
-#
-# async def full_update_athlete(db: DPSes,  athlete_id:int, athlete_data: AthleteAdd, unset=False):
-#     db.add(athlete_data.model_dump(exclude_unset=unset))
-#     await db.commit()
-#     return athlete_data
+async def part_update_athlete(db: DPSes, athlete_id:int, athlete_data: AthleteUpdate):
+    db_athlete = await db.get(Athlete, athlete_id)
+    # TODO: Проверка на наличие id - if not db_athlete: Exception
+    athlete = athlete_data.model_dump(exclude_unset=True)
+    db_athlete.sqlmodel_update(athlete)
+    db.add(db_athlete)
+    await db.commit()
+    await calculating_place(db)
+    await db.refresh(db_athlete)
+    return AthleteResponse.model_validate(db_athlete)

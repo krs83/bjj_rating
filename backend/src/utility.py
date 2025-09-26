@@ -28,5 +28,6 @@ async def calculating_place(db: DPSes):
     for i,athlete in enumerate(athletes, start=1):
         athlete.place = i
 
+    await db.commit()
 
 
