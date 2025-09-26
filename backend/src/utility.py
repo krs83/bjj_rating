@@ -1,7 +1,8 @@
 from sqlmodel import select
+from passlib.hash import pbkdf2_sha256
 
 from backend.src.dependencies import DPSes
-from backend.src.models import AthleteAdd, Athlete
+from backend.src.models.athlete import AthleteAdd, Athlete
 
 
 async def find_existing_athlete(db: DPSes, athlete_data: AthleteAdd):
@@ -29,5 +30,8 @@ async def calculating_place(db: DPSes):
         athlete.place = i
 
     await db.commit()
+
+def hash_password(password: str):
+    return pbkdf2_sha256.hash(password)
 
 

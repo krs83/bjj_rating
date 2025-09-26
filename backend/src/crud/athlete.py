@@ -1,11 +1,13 @@
 from sqlmodel import select
-from backend.src.models import Athlete, Tournament, AthleteResponse, AthleteAdd, AthleteUpdate
+from backend.src.models.athlete import Athlete, AthleteResponse, AthleteAdd, AthleteUpdate
 from backend.src.dependencies import DPSes
 from backend.src.utility import find_existing_athlete, calculating_place
+
+
 #TODO: пройтись mypy в конце
 
 
-#Athlete crud
+# Athlete crud
 async def get_athletes(db: DPSes, offset: int, limit: int):
     stmt = select(Athlete).offset(offset).limit(limit).order_by(Athlete.place.asc())
     res = await db.exec(stmt)

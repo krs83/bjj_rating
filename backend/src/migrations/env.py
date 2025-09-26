@@ -5,7 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 from sqlmodel import SQLModel
-from backend.src import models
+from backend.src.models.athlete import Athlete
+from backend.src.models.user import User
+from backend.src.models.tournament import Tournament
 from backend.src.database_settings import db_settings
 
 # this is the Alembic Config object, which provides
