@@ -21,10 +21,12 @@ async def create_athlete(db: DPSes, athlete_data: AthleteAdd):
     athlete = await find_existing_athlete(db, athlete_data)
     db.add(athlete)
     await db.commit() # TODO: оптимизировать запросы. Пока 2
+    # TODO: обработать ошибку если введены не все поля
     await db.refresh(athlete)
     await calculating_place(db)
     await db.commit()
-    return athlete_data
+    await db.refresh(athlete)
+    return AthleteResponse.model_validate(athlete)
 
 async def part_update_athlete(db: DPSes, athlete_id:int, athlete_data: AthleteUpdate):
     db_athlete = await db.get(Athlete, athlete_id)

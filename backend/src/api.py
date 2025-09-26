@@ -20,5 +20,5 @@ async def add_athlete(db: DPSes, athlete_data: AthleteAdd) -> AthleteBase:
     return await create_athlete(db, athlete_data)
 
 @r_athletes.patch('/athlete_id', response_model=AthleteResponse)
-async def update_athlete(db: DPSes, athlete_id: int, athlete_data: AthleteUpdate):
+async def update_athlete(db: DPSes, athlete_id: int, athlete_data: AthleteUpdate) -> AthleteBase:
     return await part_update_athlete(db, athlete_id, athlete_data)
