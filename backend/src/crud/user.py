@@ -22,7 +22,7 @@ async def create_user(db: DPSes, user_data: UserAdd):
     hashed_password = hash_password(user_data.password)
     extra_data = {'hashed_password': hashed_password}
     db_user = User.model_validate(user_data, update=extra_data)
-    await db.add(db_user)
+    db.add(db_user)
     await db.commit()
     await db.refresh(db_user)
     return UserResponse.model_validate(db_user)
