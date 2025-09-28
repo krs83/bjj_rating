@@ -2,10 +2,8 @@ from datetime import date
 
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
 
+from backend.src.models import AthleteTournamentLink
 
-class AthleteTournamentLink(SQLModel, table=True):
-    athlete_id: int | None = Field(default=None, foreign_key='athlete.id', primary_key=True)
-    tournament_id: int | None = Field(default=None, foreign_key='tournament.id', primary_key=True)
 
 class AthleteBase(SQLModel):
     fullname: str = Field(String(50),index=True, nullable=False)
@@ -19,7 +17,7 @@ class Athlete(AthleteBase, table=True):
     place: int | None = Field(default=None)
 
     tournaments: list["Tournament"] = Relationship(back_populates='athletes',
-                                                      link_model=AthleteTournamentLink)
+                                                   link_model=AthleteTournamentLink)
 
 class AthleteResponse(AthleteBase):
     id: int

@@ -1,5 +1,5 @@
 from sqlmodel import Field, SQLModel
-from pydantic import ConfigDict, EmailStr
+from pydantic import EmailStr
 
 class UserBase(SQLModel):
     email: EmailStr = Field(nullable=False, unique=True)

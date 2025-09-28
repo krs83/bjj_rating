@@ -2,7 +2,7 @@ from datetime import date
 
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
 
-from backend.src.models.athlete import Athlete, AthleteTournamentLink
+from backend.src.models import AthleteTournamentLink
 
 
 class Tournament(SQLModel, table=True):
@@ -11,5 +11,5 @@ class Tournament(SQLModel, table=True):
     smoothcomp_id: int = Field(nullable=False)
     smoothcomp_date: date = Field(sa_column=Column(Date))
 
-    athletes: list[Athlete] = Relationship(back_populates='tournaments',
+    athletes: list['Athlete'] = Relationship(back_populates='tournaments',
                                              link_model=AthleteTournamentLink)
