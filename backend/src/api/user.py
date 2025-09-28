@@ -2,7 +2,7 @@ from fastapi import APIRouter, Query
 
 from backend.src.crud.user import get_user, get_users, create_user, part_update_user, delete_user
 from backend.src.dependencies import DPSes
-from backend.src.models.athlete import UserAdd, UserResponse, UserBase, UserUpdate
+from backend.src.models.user import UserAdd, UserResponse, UserBase, UserUpdate
 
 router = APIRouter(prefix='/users', tags=['Пользователи'])
 

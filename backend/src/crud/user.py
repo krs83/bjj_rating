@@ -1,5 +1,5 @@
 from sqlmodel import select
-from backend.src.models.athlete import  User, UserAdd, UserResponse, UserUpdate
+from backend.src.models.user import  User, UserAdd, UserResponse, UserUpdate
 from backend.src.dependencies import DPSes
 from backend.src.utility import hash_password
 
