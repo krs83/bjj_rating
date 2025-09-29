@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, Request
 
-from backend.src.crud.auth import log_in_user, part_update_user
+from backend.src.crud.auth import log_in_user, part_update_user, log_out
 from backend.src.crud.auth import create_user
 from backend.src.dependencies import DPSes
 from backend.src.models.token import Token
@@ -20,3 +20,7 @@ async def login_user(db: DPSes, user_data: UserAdd, response: Response) -> Token
 @router.patch('/user_id', response_model=UserResponse)
 async def update_user(db: DPSes, user_id: int, user_data: UserUpdate) -> UserBase:
     return await part_update_user(db, user_id, user_data)
+
+@router.post('/logout')
+async def logout(response: Response, request: Request):
+    return await log_out(response, request)

@@ -75,3 +75,10 @@ async def part_update_user(db: DPSes, user_id:int, user_data: UserUpdate):
     await db.commit()
     await db.refresh(db_user)
     return UserResponse.model_validate(db_user)
+
+async def log_out(response, request):
+    if "access_token" in request.cookies:
+        response.delete_cookie("access_token")
+        return {"Status": "You are logged out! See you later!"}
+    else:
+        return {"error": "You are already logged out!"}
