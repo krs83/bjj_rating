@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_WEEKS: int
+    API_V1_STR: str = "/api/v1"
 
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
 
