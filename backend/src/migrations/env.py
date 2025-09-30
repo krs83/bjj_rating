@@ -10,7 +10,7 @@ from backend.src.models.user import User
 from backend.src.models.tournament import Tournament
 from backend.src.models.athlete_tournament import AthleteTournamentLink
 
-from backend.src.database_settings import settings
+from backend.src.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
