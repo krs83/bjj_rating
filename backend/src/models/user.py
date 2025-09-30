@@ -1,6 +1,6 @@
 from typing import Literal
 from sqlmodel import Field, SQLModel
-from pydantic import EmailStr, ConfigDict
+from pydantic import EmailStr
 
 ROLES = Literal[1,2,3,4]
 

@@ -26,3 +26,7 @@ async def login_user(db: DPSes, form_data: Annotated[OAuth2PasswordRequestForm, 
 @router.patch('/user_id', response_model=UserResponse)
 async def update_user(db: DPSes, user_id: int, user_data: UserUpdate) -> UserBase:
     return await part_update_user(db, user_id, user_data)
+
+@router.post('/logout')
+async def logout(response: Response, request: Request):
+    return await log_out(response, request)
