@@ -4,10 +4,11 @@ import uvicorn
 from backend.src.api.athlete import router as athlete_router
 from backend.src.api.user import router as user_router
 from backend.src.api.auth import router as auth_router
+from backend.src.config import settings
 
 app = FastAPI()
 
-app.include_router(auth_router)
+app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(user_router)
 app.include_router(athlete_router)
 

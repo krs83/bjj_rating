@@ -11,12 +11,11 @@ SUPER_ADMIN: ROLES = 4
 
 class UserBase(SQLModel):
     email: EmailStr = Field(nullable=False, unique=True)
-    role: int = Field(default=USER, nullable=False)
 
 class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str = Field(max_length=200)
-
+    role: int = Field(default=USER, nullable=False)
 
 class UserAdd(UserBase):
     password: str = Field(min_length=3)
@@ -25,6 +24,9 @@ class UserUpdate(UserBase):
     email: EmailStr | None = None
     password: str | None = None
 
+class UserLogin(SQLModel):
+    email: str
+    password: str
 
 class UserResponse(UserBase):
     id: int
