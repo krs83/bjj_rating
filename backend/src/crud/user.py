@@ -20,7 +20,7 @@ async def get_user_by_id(db: DPSes, user_id: int):
 async def get_user_by_email(db: DPSes, user_email: EmailStr) -> User:
     stmt = select(User).where(User.email == user_email )
     res = await db.exec(stmt)
-    user = res.one()
+    user = res.first()
     # TODO: Проверка на наличие id - if not user: Exception
     return user
 
