@@ -1,40 +1,17 @@
-from datetime import datetime, timedelta, timezone
 
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
-
-import jwt
 from pydantic import EmailStr
 
-from backend.src.config import settings
 from backend.src.crud.user import get_user_by_email
 from backend.src.dependencies import DPSes
 from backend.src.models.user import UserAdd, User, UserResponse, UserUpdate, UserLogin
 from backend.src.models.token import Token
+from backend.src.security import hash_password, verify_password, create_access_token
 
 #TODO: перевести в ООП и остальное тоже
 #TODO: поставь в директориях init чтобы импортировать не функции а файл.функция (только файл)
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 token_type = 'bearer'
 
-pwd_context = CryptContext(
-    schemes=['pbkdf2_sha256'],
-    pbkdf2_sha256__default_rounds=600000,
-    pbkdf2_sha256__salt_size=16
-)
-
-def hash_password(password: str):
-    return pwd_context.hash(password)
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-def create_access_token(data: dict) -> str:
-    to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(weeks=settings.ACCESS_TOKEN_EXPIRE_WEEKS)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-    return encoded_jwt
 
 async def create_user(db: DPSes, user_data: UserAdd):
     hashed_password = hash_password(user_data.password)
@@ -45,23 +22,26 @@ async def create_user(db: DPSes, user_data: UserAdd):
     await db.refresh(db_user)
     return UserResponse.model_validate(db_user)
 
+
 async def authenticate_user(db: DPSes, user_email: EmailStr, password: str):
     user = await get_user_by_email(db, user_email)
     if not user:
-        return False #TODO: добавь NoSuchUserException
+        return False  #TODO: добавь NoSuchUserException
     if not verify_password(password, user.hashed_password):
         return False
     return user
 
+
 async def login_access_token(db: DPSes, user_data: UserLogin, response):
     user = await authenticate_user(db, user_data.email, user_data.password)
     if not user:
-        return False #TODO: добавь отработку Exception
+        return False  #TODO: добавь отработку Exception
     access_token = create_access_token(data={'sub': user.email})
     response.set_cookie("access_token", access_token)
     return Token(access_token=access_token, token_type=token_type)
 
-async def part_update_user(db: DPSes, user_id:int, user_data: UserUpdate):
+
+async def part_update_user(db: DPSes, user_id: int, user_data: UserUpdate):
     db_user = await db.get(User, user_id)
     # TODO: Проверка на наличие id - if not db_user: Exception
     user = user_data.model_dump(exclude_unset=True)
@@ -75,6 +55,7 @@ async def part_update_user(db: DPSes, user_id:int, user_data: UserUpdate):
     await db.commit()
     await db.refresh(db_user)
     return UserResponse.model_validate(db_user)
+
 
 async def log_out(response, request):
     if "access_token" in request.cookies:
