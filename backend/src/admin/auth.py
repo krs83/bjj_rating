@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 from starlette.exceptions import HTTPException
 from jwt.exceptions import ExpiredSignatureError
+from starlette.responses import RedirectResponse
 
 from backend.src.admin.dependency import session_maker_admin
 from backend.src.config import settings
@@ -46,14 +47,15 @@ class AdminAuth(AuthenticationBackend):
         return True
 
     async def check_token_exp(self, token: str, request: Request):
+        redirect_url = "http://localhost:8000/admin/login" #TODO: change domain
         if token:
             try:
                 jwt.decode(
                     token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
                 )
-            except ExpiredSignatureError as e:
+            except ExpiredSignatureError:
                 await self.logout(request)
-                raise HTTPException(status_code=403, detail=f'{e}')
+                return RedirectResponse(redirect_url, status_code=303)
 
 
     async def authenticate(self, request: Request) -> bool:
