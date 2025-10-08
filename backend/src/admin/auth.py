@@ -1,10 +1,13 @@
+import jwt
 from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
+from starlette.exceptions import HTTPException
 from jwt.exceptions import ExpiredSignatureError
 
 from backend.src.admin.dependency import session_maker_admin
+from backend.src.config import settings
 
 from backend.src.models.user import User
 from backend.src.security import verify_password, create_access_token
@@ -14,8 +17,6 @@ async def authenticate_admin(db: AsyncSession, email: str, password: str):
     stmt = select(User).where(User.email == email)
     res = await db.execute(stmt)
     user = res.scalar_one_or_none()
-    print(f'{user=}')
-
 
     if user.is_admin:
         valid_password = verify_password(password, user.hashed_password)
@@ -26,6 +27,7 @@ async def authenticate_admin(db: AsyncSession, email: str, password: str):
 
 class AdminAuth(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
+
         form = await request.form()
         email, password = form["username"], form["password"]
 
@@ -34,8 +36,6 @@ class AdminAuth(AuthenticationBackend):
 
             if user:
                 token = create_access_token({'sub': user.email})
-                print(f'{token=}')
-
                 request.session.update({'token': token})
                 return True
             return False
@@ -45,12 +45,22 @@ class AdminAuth(AuthenticationBackend):
         request.session.clear()
         return True
 
-    async def authenticate(self, request: Request) -> bool:
-        try:
-           request.session.get("token")
+    async def check_token_exp(self, token: str, request: Request):
+        if token:
+            try:
+                jwt.decode(
+                    token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+                )
+            except ExpiredSignatureError as e:
+                await self.logout(request)
+                raise HTTPException(status_code=403, detail=f'{e}')
 
-        except ExpiredSignatureError:
-            await self.logout(request)
+
+    async def authenticate(self, request: Request) -> bool:
+        token = request.session.get("token")
+        await self.check_token_exp(token, request)
+
+        if not token:
             return False
         return True
 
