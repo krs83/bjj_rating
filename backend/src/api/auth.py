@@ -24,8 +24,3 @@ async def login_user(db: DPSes,
 @router.get('/me', response_model=UserResponse)
 async def get_me(current_user: CurrentUser):
     return current_user
-
-
-# @router.post('/logout')
-# async def logout(response: Response):
-#     pass

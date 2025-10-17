@@ -2,7 +2,7 @@ from datetime import date
 
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
 
-from backend.src.models import AthleteTournamentLink
+from backend.src.models import AthleteTournamentLink, Athlete
 
 
 class Tournament(SQLModel, table=True):

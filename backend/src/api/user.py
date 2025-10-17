@@ -35,16 +35,16 @@ async def get_all_users(db: DPSes,
     return await get_users(db, offset, limit)
 
 
-@router.get('/user_id', response_model=UserResponse)
+@router.get('/{user_id}', response_model=UserResponse)
 async def get_one_user(db: DPSes, user_id: int) -> Any:
     return await get_user_by_id(db, user_id)
 
 
-@router.patch('/user_id', response_model=UserResponse)
+@router.patch('/{user_id}', response_model=UserResponse)
 async def update_user(db: DPSes, user_id: int, user_data: UserUpdate) -> Any:
     return await part_update_user(db, user_id, user_data)
 
 
-@router.delete('/user_id')
+@router.delete('/{user_id}')
 async def del_user(db: DPSes, user_id: int):
     return await delete_user(db, user_id)
