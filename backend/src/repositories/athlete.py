@@ -45,3 +45,13 @@ class AthleteRepository(BaseRepository):
         result = await self._delete(Athlete, Athlete.id == athlete_id)
         await self.session.commit()
         return result
+
+    async def calculating_place(self) -> None:
+        athletes = await self.get_athletes(
+            offset=0, limit=100, order_by=Athlete.points.desc()
+        )
+
+        for i, athlete in enumerate(athletes, start=1):
+            athlete.place = i
+
+        await self.session.commit()

@@ -4,8 +4,6 @@ from pydantic import EmailStr
 from backend.src.models import User
 from backend.src.repositories.base import BaseRepository
 
-# TODO: пройтись mypy в конце
-
 
 class UserRepository(BaseRepository):
     # User crud

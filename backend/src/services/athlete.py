@@ -20,10 +20,10 @@ class AthleteService(BaseService):
         # TODO: оптимизировать запросы. Пока 2
         # TODO: обработать ошибку если введены не все поля
         await self.repository.athletes.create_athlete(athlete)
+
+        await self.repository.athletes.calculating_place()
         await self.session.refresh(athlete)
-        await self.calculating_place()
-        await self.session.commit()
-        await self.session.refresh(athlete)
+
         return AthleteResponse.model_validate(athlete)
 
     async def part_update_athlete(self, athlete_id: int, athlete_data: AthleteUpdate):
@@ -33,9 +33,7 @@ class AthleteService(BaseService):
         db_athlete = await self.repository.athletes.update_athlete(
             athlete_id=athlete_id, athlete_data=athlete
         )
-        await self.session.refresh(db_athlete)
-        await self.calculating_place()
-        await self.session.commit()
+        await self.repository.athletes.calculating_place()
         await self.session.refresh(db_athlete)
 
         return AthleteResponse.model_validate(db_athlete)
@@ -53,10 +51,7 @@ class AthleteService(BaseService):
             new_athlete = Athlete.model_validate(athlete_data)
             return new_athlete
 
-    async def calculating_place(self) -> None:
-        athletes = await self.repository.athletes.get_athletes(
-            offset=0, limit=100, order_by=Athlete.points.desc()
-        )
 
-        for i, athlete in enumerate(athletes, start=1):
-            athlete.place = i
+
+
+
