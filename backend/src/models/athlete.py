@@ -6,18 +6,21 @@ from backend.src.models import AthleteTournamentLink
 
 
 class AthleteBase(SQLModel):
-    fullname: str = Field(String(50),index=True, nullable=False)
+    fullname: str = Field(String(50), index=True, nullable=False)
     birth: date = Field(sa_column=Column(Date, index=True))
     city: str = Field(String(50))
-    region: str = Field(String(50),index=True, nullable=False)
+    region: str = Field(String(50), index=True, nullable=False)
     points: int | None = Field(index=True, default=None, ge=0)
+
 
 class Athlete(AthleteBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     place: int | None = Field(default=None)
 
-    tournaments: list["Tournament"] = Relationship(back_populates='athletes',
-                                                   link_model=AthleteTournamentLink)
+    tournaments: list["Tournament"] = Relationship(
+        back_populates="athletes", link_model=AthleteTournamentLink
+    )
+
 
 class AthleteResponse(AthleteBase):
     id: int
@@ -27,9 +30,10 @@ class AthleteResponse(AthleteBase):
 class AthleteAdd(AthleteBase):
     pass
 
+
 class AthleteUpdate(SQLModel):
     fullname: str | None = None
-    birth: date | None  = None
-    city: str | None  = None
-    region: str | None  = None
+    birth: date | None = None
+    city: str | None = None
+    region: str | None = None
     points: int | None = None

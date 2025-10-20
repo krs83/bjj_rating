@@ -4,4 +4,4 @@ from backend.src.models import AthleteTournamentLink
 
 
 class AthleteTournamentLinkAdmin(ModelView, model=AthleteTournamentLink):
-    column_list = '__all__'
+    column_list = "__all__"

@@ -4,4 +4,4 @@ from backend.src.models import Athlete
 
 
 class AthleteAdmin(ModelView, model=Athlete):
-    column_list = '__all__'
+    column_list = "__all__"

@@ -15,5 +15,5 @@ app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(user_router)
 app.include_router(athlete_router)
 
-if __name__ == '__main__':
-    uvicorn.run('backend.src.main:app', host='localhost', reload=True)
+if __name__ == "__main__":
+    uvicorn.run("backend.src.main:app", host="localhost", reload=True)

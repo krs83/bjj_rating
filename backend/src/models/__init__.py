@@ -3,4 +3,4 @@ from backend.src.models.athlete import Athlete
 from backend.src.models.tournament import Tournament
 from backend.src.models.user import User
 
-__all__ = ['Athlete', 'Tournament', 'AthleteTournamentLink', 'User']
+__all__ = ["Athlete", "Tournament", "AthleteTournamentLink", "User"]
