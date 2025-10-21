@@ -5,9 +5,9 @@ from backend.src.repositories.base import BaseRepository
 
 
 class AthleteRepository(BaseRepository):
-    # Athlete crud
 
     async def get_athletes(self, offset: int, limit: int, order_by=Athlete.place.asc()):
+
         await self.session.commit()
         result = await self._get_many(
             model=Athlete, offset=offset, limit=limit, order_by=order_by
@@ -17,15 +17,15 @@ class AthleteRepository(BaseRepository):
     async def get_athlete_by_id(self, athlete_id: int):
         return await self._get_pk(model=Athlete, pk=athlete_id)
 
-    async def get_athlete_by_conditions(self, athlete_data: AthleteAdd):
-        return await self._get_one(
+    async def get_athlete_by_conditions(self, athlete_data: AthleteAdd) -> Athlete:
+       return await self._get_one(
             Athlete,
             Athlete.fullname == athlete_data.fullname,
             Athlete.birth == athlete_data.birth,
             Athlete.region == athlete_data.region,
         )
 
-    async def create_athlete(self, db_athlete: Athlete):
+    async def create_athlete(self, db_athlete: Athlete) -> Athlete:
         self.session.add(db_athlete)
         await self.session.commit()
         await self.session.refresh(db_athlete)
@@ -33,14 +33,15 @@ class AthleteRepository(BaseRepository):
 
     async def update_athlete(
         self, athlete_id: int, athlete_data: dict[str, Any]
-    ) -> Athlete:
+    ) -> Athlete | None:
         db_athlete = await self._update(Athlete, athlete_data, athlete_id)
-        await self.session.commit()
-        await self.session.refresh(db_athlete)
-        return db_athlete
+        if db_athlete is not None:
+            await self.session.commit()
+            await self.session.refresh(db_athlete)
+            return db_athlete
+        return None
 
-    async def delete_athlete(self, athlete_id: int):
-        # TODO: Проверка на наличие id - if not db_athlete: Exception
+    async def delete_athlete(self, athlete_id: int) -> bool:
         result = await self._delete(Athlete, Athlete.id == athlete_id)
         await self.session.commit()
         return result

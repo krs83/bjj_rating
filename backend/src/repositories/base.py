@@ -47,9 +47,11 @@ class BaseRepository:
         extra: dict[str, Any] | None = None,
     ) -> T | None:
         obj = await self._get_pk(model, pk)
-        obj.sqlmodel_update(model_data, update=extra)
-        self.session.add(obj)
-        return obj
+        if obj is not None:
+            obj.sqlmodel_update(model_data, update=extra)
+            self.session.add(obj)
+            return obj
+        return None
 
     async def _delete(
         self, model: ColumnClauseType[T], *conditions: ColumnExpressionArgument[Any]
