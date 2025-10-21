@@ -6,15 +6,17 @@ from backend.src.repositories.base import BaseRepository
 
 class AthleteRepository(BaseRepository):
 
-    async def get_athletes(self, offset: int, limit: int, order_by=Athlete.place.asc()):
+    async def get_athletes(self,
+                           offset: int,
+                           limit: int,
+                           order_by=Athlete.place.asc()) ->list[Athlete]:
 
-        await self.session.commit()
         result = await self._get_many(
             model=Athlete, offset=offset, limit=limit, order_by=order_by
         )
         return result
 
-    async def get_athlete_by_id(self, athlete_id: int):
+    async def get_athlete_by_id(self, athlete_id: int) -> Athlete:
         return await self._get_pk(model=Athlete, pk=athlete_id)
 
     async def get_athlete_by_conditions(self, athlete_data: AthleteAdd) -> Athlete:

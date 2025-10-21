@@ -9,6 +9,7 @@ type ColumnClauseType[T] = type[T] | InstrumentedAttribute[T]
 
 
 class BaseRepository:
+    """Базовый репозиторий для работы с БД"""
     session: AsyncSession
 
     def __init__(self, session: AsyncSession):
@@ -30,7 +31,7 @@ class BaseRepository:
         offset: int = 0,
         limit: int = 100,
         order_by: Any | None = None,
-    ) -> Any | None:
+    ) -> list[T]:
         query = select(model)
         if order_by is not None:
             query = query.order_by(order_by)
