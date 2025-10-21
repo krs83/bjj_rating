@@ -1,3 +1,4 @@
+from backend.src.exceptions.athlete import AthleteNotFoundException
 from backend.src.models.athlete import (
     AthleteAdd,
     AthleteResponse,
@@ -12,7 +13,11 @@ class AthleteService(BaseService):
         return await self.repository.athletes.get_athletes(offset=offset, limit=limit)
 
     async def get_athlete(self, athlete_id: int) -> Athlete:
-        return await self.repository.athletes.get_athlete_by_id(athlete_id)
+        athlete =  await self.repository.athletes.get_athlete_by_id(athlete_id)
+        if not athlete:
+            self.logger.error(AthleteNotFoundException.AthleteNotFoundText.format(athlete_id))
+            raise AthleteNotFoundException(athlete_id)
+        return athlete
 
     async def create_athlete(self, athlete_data: AthleteAdd) -> AthleteResponse:
         athlete = await self.find_existing_athlete(athlete_data)

@@ -15,7 +15,6 @@ class AthleteRepository(BaseRepository):
         return result
 
     async def get_athlete_by_id(self, athlete_id: int):
-        # TODO: Проверка на наличие id - if not athlete: Exception
         return await self._get_pk(model=Athlete, pk=athlete_id)
 
     async def get_athlete_by_conditions(self, athlete_data: AthleteAdd):
