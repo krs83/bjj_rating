@@ -21,7 +21,7 @@ class AthleteService(BaseService):
 
         athlete =  await self.repository.athletes.get_athlete_by_id(athlete_id)
         if not athlete:
-            self.logger.error(AthleteNotFoundException.AthleteNotFoundText.format(athlete_id))
+            self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))
             raise AthleteNotFoundException(athlete_id)
         self.logger.info(f"Спортсмен с ID №{athlete_id} успешно получен")
         return athlete
@@ -48,7 +48,7 @@ class AthleteService(BaseService):
             athlete_id=athlete_id, athlete_data=athlete
         )
         if not db_athlete:
-            self.logger.error(AthleteNotFoundException.AthleteNotFoundText.format(athlete_id))
+            self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))
             raise AthleteNotFoundException(athlete_id)
         await self.repository.athletes.calculating_place()
         await self.session.refresh(db_athlete)
@@ -61,7 +61,7 @@ class AthleteService(BaseService):
 
         athlete =  await self.repository.athletes.delete_athlete(athlete_id)
         if not athlete:
-            self.logger.error(AthleteNotFoundException.AthleteNotFoundText.format(athlete_id))
+            self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))
             raise AthleteNotFoundException(athlete_id)
         self.logger.info(f"Спортсмен с ID №{athlete_id} успешно удалён")
 

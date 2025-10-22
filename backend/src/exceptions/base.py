@@ -9,4 +9,8 @@ class NotFoundException(BaseAppException):
     def __init__(self, detail: str = "Не найдено"):
         super().__init__(status_code=status.HTTP_404_NOT_FOUND, detail=detail)
 
+class ConflictException(BaseAppException):
+    def __init__(self, detail: str = "Конфликт данных"):
+        super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
+
 
