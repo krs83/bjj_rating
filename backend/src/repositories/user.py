@@ -6,16 +6,14 @@ from backend.src.repositories.base import BaseRepository
 
 
 class UserRepository(BaseRepository):
-    # User crud
+
     async def get_users(self, offset: int, limit: int) -> list[User]:
         return await self._get_many(model=User, offset=offset, limit=limit)
 
     async def get_user_by_id(self, user_id: int) -> User:
-        # TODO: Проверка на наличие id - if not user: Exception
         return await self._get_pk(model=User, pk=user_id)
 
     async def get_user_by_email(self, user_email: EmailStr) -> User:
-        # TODO: Проверка на наличие id - if not user: Exception
         return await self._get_one(User, User.email == user_email)
 
     async def create_user(self, db_user: User) -> User:
@@ -33,7 +31,6 @@ class UserRepository(BaseRepository):
         return db_user
 
     async def delete_user(self, user_id: int) -> bool:
-        # TODO: Проверка на наличие id - if not user_id: Exception
         result = await self._delete(User, User.id == user_id)
         await self.session.commit()
         return result
