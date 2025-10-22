@@ -13,6 +13,7 @@ from backend.src.models.user import (UserCreate,
 router = APIRouter(prefix="/users", tags=["Пользователи"])
 
 @router.get("",
+            dependencies=[Depends(get_current_admin)],
             response_model=list[UserResponse],
             description="Получение списка всех пользователей",
             summary="Get ALL the user's list")
@@ -26,6 +27,7 @@ async def get_all_users(
 
 
 @router.get("/{user_id}",
+            dependencies=[Depends(get_current_admin)],
             response_model=UserResponse,
             description="Получение записи о пользователе по ID",
             summary="Get user by ID")
@@ -44,6 +46,7 @@ async def user_create(user_service: user_serviceDP, user_data: UserCreate) -> An
 
 
 @router.patch("/{user_id}",
+              dependencies=[Depends(get_current_admin)],
               response_model=UserResponse,
               description="Обновление записи о пользователе по ID",
               summary="Update user by ID")
@@ -54,6 +57,7 @@ async def update_user(
 
 
 @router.delete("/{user_id}",
+               dependencies=[Depends(get_current_admin)],
                description="Удаление записи о пользователе по ID",
                summary="Delete user by ADMIN")
 async def del_user(user_service: user_serviceDP, user_id: int):

@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Depends
 
-from backend.src.dependencies import athlete_serviceDP
+from backend.src.dependencies import athlete_serviceDP, get_current_admin
 from backend.src.models.athlete import (
     AthleteAdd,
     AthleteResponse,
@@ -35,6 +35,7 @@ async def get_one_athlete(
 
 
 @router.post("",
+             dependencies=[Depends(get_current_admin)],
              response_model=AthleteResponse,
              description="Добавление записи о спортсмене в БД",
              summary="Add athlete to DB")
@@ -45,6 +46,7 @@ async def add_athlete(
 
 
 @router.patch("/{athlete_id}",
+              dependencies=[Depends(get_current_admin)],
               response_model=AthleteResponse,
               description="Обновление данных о спортсмене по ID",
               summary="Update athlete by ID")
@@ -55,6 +57,7 @@ async def update_athlete(
 
 
 @router.delete("/{athlete_id}",
+               dependencies=[Depends(get_current_admin)],
                description="Удаление записи о спортсмене из БД по ID",
                summary="Delete athlete by ID")
 async def del_athlete(athlete_service: athlete_serviceDP, athlete_id: int):
