@@ -13,4 +13,8 @@ class ConflictException(BaseAppException):
     def __init__(self, detail: str = "Конфликт данных"):
         super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
 
+class AuthenticationException(BaseAppException):
+    def __init__(self, detail: str = "Неверные учетные данные"):
+        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
+
 
