@@ -9,7 +9,7 @@ from backend.src.dependencies import (CurrentUser,
 from backend.src.models.token import Token
 from backend.src.models.user import (UserLogin,
                                      UserResponse,
-                                     UserCreate)
+                                     UserCreate, User)
 
 router = APIRouter(prefix="/auth", tags=["Авторизация и аутентификация"])
 
@@ -31,7 +31,7 @@ async def login_user(
              response_model=UserResponse,
              description="Регистрация пользователя без аутентификации",
              summary="Register user by email&password")
-async def register_user(user_service: user_serviceDP, user_data: UserLogin) -> Any:
+async def register_user(user_service: user_serviceDP, user_data: UserLogin) -> UserResponse:
     _user_create = UserCreate.model_validate(user_data)
     return await user_service.create_user(user_data)
 
@@ -40,5 +40,5 @@ async def register_user(user_service: user_serviceDP, user_data: UserLogin) -> A
             response_model=UserResponse,
             description="Получение данных о текущем пользователе",
             summary="Get current user")
-async def get_me(current_user: CurrentUser):
+async def get_me(current_user: CurrentUser) -> User:
     return current_user

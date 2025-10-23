@@ -9,7 +9,7 @@ from backend.src.admin.tournament import TournamentAdmin
 from backend.src.admin.athlete_tournament import AthleteTournamentLinkAdmin
 
 
-def setup_admin(app):
+def setup_admin(app) -> None:
     admin = Admin(
         app=app,
         engine=engine,

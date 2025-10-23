@@ -60,5 +60,5 @@ async def update_athlete(
                dependencies=[Depends(get_current_admin)],
                description="Удаление записи о спортсмене из БД по ID",
                summary="Delete athlete by ID")
-async def del_athlete(athlete_service: athlete_serviceDP, athlete_id: int):
+async def del_athlete(athlete_service: athlete_serviceDP, athlete_id: int) -> bool:
     return await athlete_service.del_athlete(athlete_id)

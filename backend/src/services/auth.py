@@ -24,6 +24,8 @@ class AuthService(BaseService):
         return user
 
     async def login_access_token(self, user_data: UserLogin) -> Token:
+        """Получение токена при успешном входе"""
+
         user = await self.authenticate_user(user_data.email, user_data.password)
 
         data = {"sub": user.email, "is_admin": user.is_admin}

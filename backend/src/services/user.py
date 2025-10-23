@@ -1,6 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 
-from backend.src.exceptions.user import UserNotFoundException, UserConflictException
+from backend.src.exceptions.user import UserIDNotFoundException, UserConflictException
 from backend.src.models.user import (
     UserCreate,
     User,
@@ -16,7 +16,7 @@ class UserService(BaseService):
 
     async def get_users(self, offset: int, limit: int) -> list[User]:
         """Получение всех пользователей из БД согласно выборке"""
-        self.logger.info(f"Получен список всех пользователей из БД согласно выборке")
+        self.logger.info("Получен список всех пользователей из БД согласно выборке")
 
         return await self.repository.users.get_users(offset=offset, limit=limit)
 
@@ -25,8 +25,8 @@ class UserService(BaseService):
 
         user =  await self.repository.users.get_user_by_id(user_id)
         if not user:
-            self.logger.error(UserNotFoundException.USERNOTFOUNDTEXT.format(user_id))
-            raise UserNotFoundException(user_id)
+            self.logger.error(UserIDNotFoundException.USER_ID_NOT_FOUND_TEXT.format(user_id))
+            raise UserIDNotFoundException(user_id)
         self.logger.info(f"Пользователь с ID №{user_id} успешно получен")
         return user
 
@@ -44,7 +44,7 @@ class UserService(BaseService):
 
             await self.repository.users.create_user(db_user)
         except IntegrityError:
-            self.logger.error(UserConflictException.USERCONFLICTTEXT.format(user_data.email))
+            self.logger.error(UserConflictException.USER_CONFLICT_TEXT.format(user_data.email))
             raise UserConflictException(user_data.email)
         self.logger.info(f"Добавлен новый пользователь с email {user_data.email}")
 
@@ -68,11 +68,11 @@ class UserService(BaseService):
                 user_id=user_id, user_data=user, extra_data=extra_data
             )
         except IntegrityError:
-            self.logger.error(UserConflictException.USERCONFLICTTEXT.format(user_data.email))
+            self.logger.error(UserConflictException.USER_CONFLICT_TEXT.format(user_data.email))
             raise UserConflictException(user_data.email)
         if not db_user:
-            self.logger.error(UserNotFoundException.USERNOTFOUNDTEXT.format(user_id))
-            raise UserNotFoundException(user_id)
+            self.logger.error(UserIDNotFoundException.USER_ID_NOT_FOUND_TEXT.format(user_id))
+            raise UserIDNotFoundException(user_id)
         self.logger.info(f"Пользователь с ID №{user_id} успешно обновлён")
 
         return UserResponse.model_validate(db_user)
@@ -82,8 +82,8 @@ class UserService(BaseService):
 
         user =  await self.repository.users.delete_user(user_id)
         if not user:
-            self.logger.error(UserNotFoundException.USERNOTFOUNDTEXT.format(user_id))
-            raise UserNotFoundException(user_id)
+            self.logger.error(UserIDNotFoundException.USER_ID_NOT_FOUND_TEXT.format(user_id))
+            raise UserIDNotFoundException(user_id)
         self.logger.info(f"Пользователь с ID №{user_id} успешно удалён")
 
         return user

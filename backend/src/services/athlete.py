@@ -12,7 +12,7 @@ class AthleteService(BaseService):
 
     async def get_athletes(self, offset: int, limit: int) -> list[Athlete]:
         """Получение всех спортсменов из БД согласно выборке"""
-        self.logger.info(f"Получен список всех спортсменов из БД согласно выборке")
+        self.logger.info("Получен список всех спортсменов из БД согласно выборке")
 
         return await self.repository.athletes.get_athletes(offset=offset, limit=limit)
 
@@ -35,7 +35,7 @@ class AthleteService(BaseService):
 
         await self.repository.athletes.calculating_place()
         await self.session.refresh(athlete)
-        self.logger.info(f"Добавлен новый спортсмен")
+        self.logger.info("Добавлен новый спортсмен")
 
         return AthleteResponse.model_validate(athlete)
 
@@ -83,7 +83,7 @@ class AthleteService(BaseService):
             return athlete
         else:
             new_athlete = Athlete.model_validate(athlete_data)
-            self.logger.info(f"Добавлен новый спортсмен")
+            self.logger.info("Добавлен новый спортсмен")
 
             return new_athlete
 

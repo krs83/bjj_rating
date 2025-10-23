@@ -41,7 +41,7 @@ async def get_one_user(user_service: user_serviceDP, user_id: int) -> Any:
              response_model=UserResponse,
              description="Добавление записи о пользователе АДМИНОМ",
              summary="Add user by ADMIN")
-async def user_create(user_service: user_serviceDP, user_data: UserCreate) -> Any:
+async def user_create(user_service: user_serviceDP, user_data: UserCreate) -> UserResponse:
     return await user_service.create_user(user_data)
 
 
@@ -60,5 +60,5 @@ async def update_user(
                dependencies=[Depends(get_current_admin)],
                description="Удаление записи о пользователе по ID",
                summary="Delete user by ADMIN")
-async def del_user(user_service: user_serviceDP, user_id: int):
+async def del_user(user_service: user_serviceDP, user_id: int) -> bool:
     return await user_service.del_user(user_id)

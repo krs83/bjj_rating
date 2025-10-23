@@ -32,7 +32,7 @@ async def get_session() -> AsyncSession:
 DPSes = Annotated[AsyncSession, Depends(get_session)]
 
 
-async def get_current_user(db: DPSes, token: DPToken):
+async def get_current_user(db: DPSes, token: DPToken) -> User:
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
