@@ -10,7 +10,7 @@ class AthleteBase(SQLModel):
     birth: date = Field(sa_column=Column(Date, index=True))
     city: str = Field(String(50))
     region: str = Field(String(50), index=True, nullable=False)
-    points: int | None = Field(index=True, default=None, ge=0)
+    points: int = Field(index=True, default=0, ge=0)
 
 
 class Athlete(AthleteBase, table=True):
