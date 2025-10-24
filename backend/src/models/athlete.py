@@ -1,9 +1,12 @@
 from datetime import date
+from typing import TYPE_CHECKING
 
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
 
 from backend.src.models import AthleteTournamentLink
 
+if TYPE_CHECKING:
+    from backend.src.models import Tournament
 
 class AthleteBase(SQLModel):
     fullname: str = Field(String(50), index=True, nullable=False)

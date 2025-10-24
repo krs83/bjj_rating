@@ -24,14 +24,15 @@ async def authenticate_admin(
     res = await db.execute(stmt)
     user = res.scalar_one_or_none()
 
-    if user.is_admin:
-        valid_password = verify_password(password, user.hashed_password)
-        if valid_password:
-            return user
+    if user:
+        if user.is_admin:
+            valid_password = verify_password(password, user.hashed_password)
+            if valid_password:
+                return user
+            else:
+                return False
         else:
-            return False
-    else:
-        raise HTTPException(status_code=403, detail="Доступ запрещен")
+            raise HTTPException(status_code=403, detail="Доступ запрещен")
 
 
 class AdminAuth(AuthenticationBackend):
