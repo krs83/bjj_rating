@@ -60,6 +60,7 @@ class AthleteService(BaseService):
         """Удаление записи о спортсмене из БД по его ID"""
 
         athlete =  await self.repository.athletes.delete_athlete(athlete_id)
+        await self.repository.athletes.calculating_place()
         if not athlete:
             self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))
             raise AthleteNotFoundException(athlete_id)
