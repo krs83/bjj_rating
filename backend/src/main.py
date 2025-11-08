@@ -1,19 +1,44 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 
 from backend.src.api.athlete import router as athlete_router
 from backend.src.api.user import router as user_router
 from backend.src.api.auth import router as auth_router
+
+from frontend.endpoints.athletes import router as athlete_html_router
+
 from backend.src.admin.setup import setup_admin
 from backend.src.config import settings
 
-app = FastAPI()
+app = FastAPI(title="BJJ Rating System", version="1.0.0")
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+templates = Jinja2Templates(directory=f"{BASE_DIR}/frontend/templates/")
+
 
 setup_admin(app)
 
+#front routers
+app.include_router(athlete_html_router)
+
+#back routers
 app.include_router(auth_router, prefix=settings.API_V1_STR)
-app.include_router(user_router)
-app.include_router(athlete_router)
+app.include_router(user_router, prefix=settings.API_V1_STR)
+app.include_router(athlete_router, prefix=settings.API_V1_STR)
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:8000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     uvicorn.run("backend.src.main:app", host="localhost", reload=True)
