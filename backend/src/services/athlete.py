@@ -1,3 +1,5 @@
+from typing import List
+
 from backend.src.exceptions.athlete import AthleteNotFoundException
 from backend.src.models.athlete import (
     AthleteAdd,
@@ -29,7 +31,8 @@ class AthleteService(BaseService):
     async def create_athlete(self, athlete_data: AthleteAdd) -> AthleteResponse:
         """Добавление записи в БД о новом спортсмене"""
 
-        athlete = await self.find_existing_athlete(athlete_data)
+        athletes = await self.find_existing_athlete(athlete_data)
+        athlete = athletes[0]
 
         await self.repository.athletes.create_athlete(athlete)
 
@@ -38,6 +41,21 @@ class AthleteService(BaseService):
         self.logger.info("Добавлен новый спортсмен")
 
         return AthleteResponse.model_validate(athlete)
+
+    async def create_few_athletes(self, athlete_data: List[AthleteAdd]) -> List[AthleteResponse]:
+        """Добавление списка новых спортсменов в БД"""
+
+        athletes = await self.find_existing_athlete(athlete_data)
+
+        await self.repository.athletes.create_few_athletes(athletes)
+
+        await self.repository.athletes.calculating_place()
+
+        for athlete in athletes:
+            await self.session.refresh(athlete)
+        self.logger.info("Массовое добавление спортсменов")
+
+        return [AthleteResponse.model_validate(athlete) for athlete in athletes]
 
     async def part_update_athlete(self, athlete_id: int, athlete_data: AthleteUpdate) -> AthleteResponse:
         """Частичное или полное обновление данных о спортсмене по его ID"""
@@ -69,24 +87,32 @@ class AthleteService(BaseService):
         return athlete
 
 
-    async def find_existing_athlete(self, athlete_data: AthleteAdd) -> Athlete:
+    async def find_existing_athlete(self, athletes_data: AthleteAdd | List[AthleteAdd]) -> List[Athlete]:
         """Если будет совпадение по имени, ДР и региону, новый спортсмен не добавляется\n
        Только суммируются баллы\n
         В противном случае - добавляется новый спортсмен
         """
 
-        athlete = await self.repository.athletes.get_athlete_by_conditions(athlete_data)
+        if not isinstance(athletes_data, list):
+            athletes_data = [athletes_data]
 
-        if athlete:
-            athlete.points += athlete_data.points
-            self.logger.info(f"Баллы спортсмена обновлены - {athlete.points} ")
+        list_athletes = []
+        for athlete_data in athletes_data:
 
-            return athlete
-        else:
-            new_athlete = Athlete.model_validate(athlete_data)
+            athlete = await self.repository.athletes.get_athlete_by_conditions(athlete_data)
+
+            if athlete:
+                athlete.points += athlete_data.points
+                list_athletes.append(athlete)
+                self.logger.info(f"Баллы спортсмена обновлены - {athlete.points} ")
+
+            else:
+                new_athlete = Athlete.model_validate(athlete_data)
+                list_athletes.append(new_athlete)
+
             self.logger.info("Добавлен новый спортсмен")
 
-            return new_athlete
+        return list_athletes
 
 
 

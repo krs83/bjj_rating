@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 from backend.src.models.athlete import Athlete, AthleteAdd
 from backend.src.repositories.base import BaseRepository
@@ -31,6 +31,13 @@ class AthleteRepository(BaseRepository):
         self.session.add(db_athlete)
         await self.session.commit()
         await self.session.refresh(db_athlete)
+        return db_athlete
+
+    async def create_few_athletes(self, db_athlete: List[Athlete]) -> List[Athlete]:
+        self.session.add_all(db_athlete)
+        await self.session.commit()
+        for athlete in db_athlete:
+            await self.session.refresh(athlete)
         return db_athlete
 
     async def update_athlete(

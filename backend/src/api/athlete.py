@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Query, Depends
 
 from backend.src.dependencies import athlete_serviceDP, get_current_admin
@@ -43,6 +45,17 @@ async def add_athlete(
     athlete_service: athlete_serviceDP, athlete_data: AthleteAdd
 ) -> AthleteBase:
     return await athlete_service.create_athlete(athlete_data)
+
+
+@router.post("/bulk",
+             dependencies=[Depends(get_current_admin)],
+             response_model=List[AthleteResponse],
+             description="Добавление списка записей о спортсменах в БД",
+             summary="Add athletes list to DB")
+async def add_few_athletes(
+        athlete_service: athlete_serviceDP, athlete_data: List[AthleteAdd]
+) -> List[AthleteResponse]:
+    return await athlete_service.create_few_athletes(athlete_data)
 
 
 @router.patch("/{athlete_id}",
