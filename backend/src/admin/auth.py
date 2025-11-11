@@ -20,7 +20,7 @@ async def authenticate_admin(
     email: str,
     password: str,
 ):
-    stmt = select(User).where(col(User.email == email))
+    stmt = select(User).where(User.email == email)
     res = await db.execute(stmt)
     user = res.scalar_one_or_none()
 
