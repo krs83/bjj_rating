@@ -18,7 +18,15 @@
           {{ athlete.place }}
         </div>
       </td>
-      <td>{{ athlete.fullname }}</td>
+      <td>
+        <a href="/athletes/{{ athlete.id }}"
+           class="text-decoration-none fw-bold"
+           hx-get="/athletes/{{ athlete.id }}"
+           hx-target="body"
+           hx-push-url="true">
+          {{ athlete.fullname }}
+        </a>
+      </td>
       <td>{{ athlete.city }}</td>
       <td>{{ athlete.region }}</td>
       <td>
