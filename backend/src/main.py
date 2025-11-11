@@ -20,7 +20,6 @@ app = FastAPI(title=settings.SITENAME, version="1.0.0")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-print(BASE_DIR)
 app.mount("/static", StaticFiles(directory=f"{BASE_DIR}/frontend/static/"), name="static")
 templates = Jinja2Templates(directory=f"{BASE_DIR}/frontend/templates/")
 

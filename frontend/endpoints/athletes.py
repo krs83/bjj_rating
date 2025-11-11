@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from backend.src.dependencies import athlete_serviceDP
+from backend.src.exceptions.athlete import AthleteNotFoundException
 
 router = APIRouter(include_in_schema=False, prefix="/athletes")
 
@@ -35,5 +36,39 @@ async def get_all_athletes_html(
             "athletes": athletes,
             "offset": offset,
             "limit": limit
+        }
+    )
+
+
+@router.get("/{athlete_id}", response_class=HTMLResponse)
+async def get_athlete_detail(
+        request: Request,
+        athlete_id: int,
+        athlete_service: athlete_serviceDP,
+):
+    try:
+        athlete = await athlete_service.get_athlete(athlete_id)
+    except AthleteNotFoundException:
+        # Если атлет не найден, возвращаем на список атлетов
+        return templates.TemplateResponse(
+            "athletes/athletes.html",
+            {
+                "request": request,
+                "athletes": [],
+                "error": f"Атлет с ID {athlete_id} не найден"
+            }
+        )
+
+    # Проверяем HTMX запрос
+    if request.headers.get("hx-request"):
+        template = "athletes/athlete_detail_fragment.html"
+    else:
+        template = "athletes/athlete_detail.html"
+
+    return templates.TemplateResponse(
+        template,
+        {
+            "request": request,
+            "athlete": athlete
         }
     )
