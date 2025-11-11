@@ -1,0 +1,59 @@
+/* frontend/static/css/style.css */
+
+/* Стили для ссылок имен атлетов */
+a.text-decoration-none:hover {
+    color: #0d6efd !important;
+    text-decoration: underline !important;
+}
+
+/* Стили для бейджей рейтинга в таблице */
+.ranking-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    min-width: 35px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* Стили для больших бейджей на странице деталей */
+.ranking-badge-large {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.ranking-1 {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: #000;
+}
+
+.ranking-2 {
+    background: linear-gradient(45deg, #C0C0C0, #A9A9A9);
+    color: #000;
+}
+
+.ranking-3 {
+    background: linear-gradient(45deg, #CD7F32, #8B4513);
+    color: #fff;
+}
+
+.ranking-other {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+/* Аватар атлета */
+.athlete-avatar {
+    margin-bottom: 15px;
+}
+
+/* Отображение очков */
+.points-display .badge {
+    font-size: 1.5rem !important;
+    padding: 10px 20px;
+}

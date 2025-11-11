@@ -4,6 +4,7 @@ from fastapi import FastAPI
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 from backend.src.api.athlete import router as athlete_router
 from backend.src.api.user import router as user_router
@@ -18,6 +19,9 @@ from backend.src.config import settings
 app = FastAPI(title=settings.SITENAME, version="1.0.0")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+print(BASE_DIR)
+app.mount("/static", StaticFiles(directory=f"{BASE_DIR}/frontend/static/"), name="static")
 templates = Jinja2Templates(directory=f"{BASE_DIR}/frontend/templates/")
 
 
