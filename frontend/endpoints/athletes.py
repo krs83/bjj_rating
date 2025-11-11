@@ -19,11 +19,17 @@ async def get_all_athletes_html(
         athlete_service: athlete_serviceDP,
         offset: int = Query(default=0, ge=0, description="Смещение для пагинации"),
         limit: int = Query(default=50, le=100, description="Лимит записей на страницу"),
-        ):
+):
     athletes = await athlete_service.get_athletes(offset, limit)
 
+    # Проверяем HTMX запрос
+    if request.headers.get("hx-request"):
+        template = "athletes/athletes_fragment.html"
+    else:
+        template = "athletes/athletes.html"
+
     return templates.TemplateResponse(
-        "/athletes/athletes.html",
+        template,
         {
             "request": request,
             "athletes": athletes,
@@ -31,5 +37,3 @@ async def get_all_athletes_html(
             "limit": limit
         }
     )
-
-

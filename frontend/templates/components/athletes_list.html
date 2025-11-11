@@ -1,4 +1,4 @@
-{# athletes_table.html #}
+{# athletes_list.html #}
 <div class="table-responsive">
   <table class="table table-striped table-hover">
     <thead class="table-dark">
@@ -8,7 +8,6 @@
       <th>Город</th>
       <th>Регион</th>
       <th>Очки</th>
-      <th>Действия</th>
     </tr>
     </thead>
     <tbody>
@@ -19,38 +18,11 @@
           {{ athlete.place }}
         </div>
       </td>
-      <td>
-        <a href="#"
-           hx-get="/athletes/{{ athlete.id }}"
-           hx-target="main"
-           hx-push-url="true">
-          {{ athlete.fullname }}
-        </a>
-      </td>
+      <td>{{ athlete.fullname }}</td>
       <td>{{ athlete.city }}</td>
       <td>{{ athlete.region }}</td>
       <td>
         <span class="badge bg-primary">{{ athlete.points }}</span>
-      </td>
-      <td>
-        <button class="btn btn-sm btn-outline-primary"
-                hx-get="/athletes/{{ athlete.id }}"
-                hx-target="main"
-                hx-push-url="true">
-          <i class="fas fa-eye"></i>
-        </button>
-        {% if user and user.is_admin %}
-        <button class="btn btn-sm btn-outline-warning"
-                hx-get="/api/v1/athletes/{{ athlete.id }}/edit"
-                hx-target="main">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-danger"
-                hx-delete="/api/v1/athletes/{{ athlete.id }}"
-                hx-confirm="Удалить спортсмена?">
-          <i class="fas fa-trash"></i>
-        </button>
-        {% endif %}
       </td>
     </tr>
     {% endfor %}
