@@ -10,11 +10,12 @@ from backend.src.api.user import router as user_router
 from backend.src.api.auth import router as auth_router
 
 from frontend.endpoints.athletes import router as athlete_html_router
+from frontend.endpoints.index import router as index_router
 
 from backend.src.admin.setup import setup_admin
 from backend.src.config import settings
 
-app = FastAPI(title="BJJ Rating System", version="1.0.0")
+app = FastAPI(title=settings.SITENAME, version="1.0.0")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 templates = Jinja2Templates(directory=f"{BASE_DIR}/frontend/templates/")
@@ -24,6 +25,7 @@ setup_admin(app)
 
 #front routers
 app.include_router(athlete_html_router)
+app.include_router(index_router)
 
 #back routers
 app.include_router(auth_router, prefix=settings.API_V1_STR)
