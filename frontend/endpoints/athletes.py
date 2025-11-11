@@ -23,7 +23,7 @@ async def get_all_athletes_html(
     athletes = await athlete_service.get_athletes(offset, limit)
 
     return templates.TemplateResponse(
-        "/athletes/list.html",
+        "/athletes/athletes.html",
         {
             "request": request,
             "athletes": athletes,
