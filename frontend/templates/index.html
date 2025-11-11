@@ -6,61 +6,32 @@
 <div class="row">
     <div class="col-12">
         <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
-            <h1 class="display-4"><i class="fas fa-trophy"></i> BJJ Rating System</h1>
+            <h1 class="display-4"><i class="fas fa-trophy"></i> {{ site_name }}</h1>
             <p class="lead">Рейтинговая система для спортсменов бразильского джиу-джитсу</p>
-            <hr class="my-4">
-            <p>Отслеживайте результаты спортсменов, турниры и рейтинги в реальном времени.</p>
-            <a class="btn btn-light btn-lg" href="/athletes"
+            <a class="btn btn-light btn-lg mt-3" href="/athletes"
                hx-get="/athletes" hx-target="main" hx-push-url="true">
-                <i class="fas fa-users"></i> Смотреть спортсменов
+                <i class="fas fa-users"></i> Все спортсмены
             </a>
         </div>
     </div>
 </div>
 
+<!-- Топ-25 спортсменов -->
 <div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body text-center">
-                <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                <h5 class="card-title">Спортсмены</h5>
-                <p class="card-text">Просмотр рейтинга и профилей спортсменов</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body text-center">
-                <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
-                <h5 class="card-title">Турниры</h5>
-                <p class="card-text">Информация о прошедших и предстоящих турнирах</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body text-center">
-                <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
-                <h5 class="card-title">Статистика</h5>
-                <p class="card-text">Аналитика и статистика результатов</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Latest Athletes -->
-<div class="row mt-5">
     <div class="col-12">
-        <h3>Последние спортсмены</h3>
-        <div id="latest-athletes"
-             hx-get="/api/v1/athletes?limit=5"
-             hx-trigger="load"
-             hx-target="this">
-            <div class="text-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
+        <h2 class="mb-4"><i class="fas fa-crown"></i> Топ-25 спортсменов</h2>
+
+        {% include "components/athletes_list.html" %}
+
+        <!-- Ссылка на полный список -->
+        <div class="text-center mt-4">
+            <a class="btn btn-outline-primary btn-lg"
+               href="/athletes"
+               hx-get="/athletes"
+               hx-target="main"
+               hx-push-url="true">
+                <i class="fas fa-list"></i> Показать всех спортсменов
+            </a>
         </div>
     </div>
 </div>
