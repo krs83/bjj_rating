@@ -10,11 +10,12 @@ from fastapi.security import OAuth2PasswordBearer
 
 from backend.src.config import settings
 from backend.src.database import engine
-from backend.src.models import User
+from backend.src.models import User, Tournament
 from backend.src.models.token import TokenData
 from backend.src.repositories.general import Repository
 from backend.src.services.athlete import AthleteService
 from backend.src.services.auth import AuthService
+from backend.src.services.tournament import TournamentService
 from backend.src.services.user import UserService
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -88,3 +89,11 @@ def get_auth_service(session: DPSes) -> AuthService:
 
 
 auth_serviceDP = Annotated[AuthService, Depends(get_auth_service)]
+
+
+def get_tournament_service(session: DPSes) -> TournamentService:
+    repository = Repository(session)
+    return TournamentService(repository)
+
+
+tournament_serviceDP = Annotated[TournamentService, Depends(get_tournament_service)]

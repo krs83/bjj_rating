@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from backend.src.api.athlete import router as athlete_router
 from backend.src.api.user import router as user_router
 from backend.src.api.auth import router as auth_router
+from backend.src.api.tournament import router as tournament_router
 
 from frontend.endpoints.athletes import router as athlete_html_router
 from frontend.endpoints.index import router as index_router
@@ -34,6 +35,7 @@ app.include_router(index_router)
 app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(user_router, prefix=settings.API_V1_STR)
 app.include_router(athlete_router, prefix=settings.API_V1_STR)
+app.include_router(tournament_router, prefix=settings.API_V1_STR)
 
 
 
