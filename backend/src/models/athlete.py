@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
 
 from backend.src.models import AthleteTournamentLink
+from backend.src.models.tournament import TournamentResponse, TournamentAdd
 
 if TYPE_CHECKING:
     from backend.src.models import Tournament
@@ -28,6 +29,7 @@ class Athlete(AthleteBase, table=True):
 class AthleteResponse(AthleteBase):
     id: int
     place: int
+    tournaments: list[TournamentResponse]
 
 
 class AthleteAdd(AthleteBase):
@@ -40,3 +42,4 @@ class AthleteUpdate(SQLModel):
     city: str | None = None
     region: str | None = None
     points: int | None = None
+

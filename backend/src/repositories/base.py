@@ -1,6 +1,6 @@
 from typing import Any, cast, TypeVar
 from sqlalchemy import ColumnExpressionArgument
-from sqlalchemy.orm import InstrumentedAttribute
+from sqlalchemy.orm import InstrumentedAttribute, selectinload
 from sqlmodel import select, delete
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -22,21 +22,34 @@ class BaseRepository:
         result = await self.session.exec(query)
         return result.first()
 
-    async def _get_pk(self, model: ColumnClauseType[T], pk: int) -> T | None:
+    async def _get_pk(self,
+                      model: ColumnClauseType[T],
+                      pk: int,
+                      link_model: ColumnClauseType[T] | None = None,
+                      link: bool = False) -> T | None:
+        if link:
+            query = select(model).options(selectinload(link_model)).where(model.id == pk)
+            result = await self.session.exec(query)
+            return result.first()
+
         return await self.session.get(model, pk)
 
     async def _get_many(
         self,
         model: ColumnClauseType[T],
+        link_model: ColumnClauseType[T] | None = None,
         offset: int = 0,
         limit: int = 100,
         order_by: Any | None = None,
+        link: bool = False
     ) -> list[T]:
         query = select(model)
         if order_by is not None:
             query = query.order_by(order_by)
-        query = query.offset(offset).limit(limit)
+        if link:
+            query = query.options(selectinload(link_model))
 
+        query = query.offset(offset).limit(limit)
         result = await self.session.exec(query)
         return result.all()
 

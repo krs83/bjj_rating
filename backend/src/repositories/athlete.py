@@ -12,12 +12,17 @@ class AthleteRepository(BaseRepository):
                            order_by=Athlete.place.asc()) ->list[Athlete]:
 
         result = await self._get_many(
-            model=Athlete, offset=offset, limit=limit, order_by=order_by
+            model=Athlete,
+            offset=offset,
+            limit=limit,
+            order_by=order_by,
+            link_model=Athlete.tournaments,
+            link=True
         )
         return result
 
     async def get_athlete_by_id(self, athlete_id: int) -> Athlete:
-        return await self._get_pk(model=Athlete, pk=athlete_id)
+        return await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
 
     async def get_athlete_by_conditions(self, athlete_data: AthleteAdd) -> Athlete:
        return await self._get_one(

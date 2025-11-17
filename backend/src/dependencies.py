@@ -14,6 +14,7 @@ from backend.src.models import User, Tournament
 from backend.src.models.token import TokenData
 from backend.src.repositories.general import Repository
 from backend.src.services.athlete import AthleteService
+from backend.src.services.athlete_tournament_link import AthleteTournamentLinkService
 from backend.src.services.auth import AuthService
 from backend.src.services.tournament import TournamentService
 from backend.src.services.user import UserService
@@ -97,3 +98,11 @@ def get_tournament_service(session: DPSes) -> TournamentService:
 
 
 tournament_serviceDP = Annotated[TournamentService, Depends(get_tournament_service)]
+
+
+def get_athlete_tournament_link_service(session: DPSes) -> AthleteTournamentLinkService:
+    repository = Repository(session)
+    return AthleteTournamentLinkService(repository)
+
+
+athlete_tournament_link_serviceDP = Annotated[AthleteTournamentLinkService, Depends(get_athlete_tournament_link_service)]
