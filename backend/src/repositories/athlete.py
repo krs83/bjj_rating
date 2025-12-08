@@ -27,9 +27,9 @@ class AthleteRepository(BaseRepository):
     async def get_athlete_by_conditions(self, athlete_data: AthleteAdd) -> Athlete:
        return await self._get_one(
             Athlete,
-            Athlete.fullname == athlete_data.fullname,
-            Athlete.birth == athlete_data.birth,
-            Athlete.region == athlete_data.region,
+           Athlete.fullname == athlete_data.fullname,
+           Athlete.category == athlete_data.category,
+           Athlete.affiliation == athlete_data.affiliation,
         )
 
     async def create_athlete(self, db_athlete: Athlete) -> Athlete:

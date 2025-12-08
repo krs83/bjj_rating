@@ -1,19 +1,19 @@
 from datetime import date
 from typing import TYPE_CHECKING
 
-from sqlmodel import Field, SQLModel, String, Date, Relationship, Column
+from sqlmodel import Field, SQLModel, String, Relationship
 
 from backend.src.models import AthleteTournamentLink
-from backend.src.models.tournament import TournamentResponse, TournamentAdd
+from backend.src.models.tournament import TournamentResponse
 
 if TYPE_CHECKING:
     from backend.src.models import Tournament
 
 class AthleteBase(SQLModel):
     fullname: str = Field(String(50), index=True, nullable=False)
-    birth: date = Field(sa_column=Column(Date, index=True))
-    city: str = Field(String(50))
-    region: str = Field(String(50), index=True, nullable=False)
+    category: str = Field(String(50), index=True, nullable=False)
+    academy: str = Field(String(50), index=True, nullable=True)
+    affiliation: str = Field(String(50), nullable=True )
     points: int = Field(index=True, default=0, ge=0)
 
 
@@ -22,24 +22,25 @@ class Athlete(AthleteBase, table=True):
     place: int | None = Field(default=None)
 
     tournaments: list["Tournament"] = Relationship(
-        back_populates="athletes", link_model=AthleteTournamentLink
+        back_populates="athletes",  link_model=AthleteTournamentLink
     )
 
 
 class AthleteResponse(AthleteBase):
     id: int
     place: int
-    tournaments: list[TournamentResponse]
+    tournament_ids: list[int]
 
 
 class AthleteAdd(AthleteBase):
-    pass
+    tournament_ids: list[int]
+
 
 
 class AthleteUpdate(SQLModel):
     fullname: str | None = None
-    birth: date | None = None
-    city: str | None = None
-    region: str | None = None
+    category: date | None = None
+    academy: str | None = None
+    affiliation: str | None = None
     points: int | None = None
 

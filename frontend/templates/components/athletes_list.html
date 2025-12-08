@@ -4,9 +4,10 @@
     <thead class="table-dark">
     <tr>
       <th>Место</th>
-      <th>Имя</th>
-      <th>Город</th>
-      <th>Регион</th>
+      <th>Имя и фамилия</th>
+      <th>Категория</th>
+      <th>Академия</th>
+      <th>Аффилиация</th>
       <th>Очки</th>
     </tr>
     </thead>
@@ -27,8 +28,9 @@
           {{ athlete.fullname }}
         </a>
       </td>
-      <td>{{ athlete.city }}</td>
-      <td>{{ athlete.region }}</td>
+      <td>{{ athlete.category }}</td>
+      <td>{{ athlete.academy }}</td>
+      <td>{{ athlete.affiliation }}</td>
       <td>
         <span class="badge bg-primary">{{ athlete.points }}</span>
       </td>

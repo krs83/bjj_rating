@@ -46,21 +46,21 @@
 
                     <div class="row mt-4">
                         <div class="col-sm-6">
-                            <h5><i class="fas fa-city"></i> Город</h5>
-                            <p class="fs-5">{{ athlete.city }}</p>
+                            <h5><i class="fas fa-city"></i> Академия</h5>
+                            <p class="fs-5">{{ athlete.academy }}</p>
                         </div>
 
                         <div class="col-sm-6">
-                            <h5><i class="fas fa-map-marker-alt"></i> Регион</h5>
-                            <p class="fs-5">{{ athlete.region }}</p>
+                            <h5><i class="fas fa-map-marker-alt"></i> Аффилиация</h5>
+                            <p class="fs-5">{{ athlete.affiliation }}</p>
                         </div>
                     </div>
 
                     {% if athlete.birth %}
                     <div class="row mt-4">
                         <div class="col-12">
-                            <h5><i class="fas fa-birthday-cake"></i> Дата рождения</h5>
-                            <p class="fs-5">{{ athlete.birth.strftime('%d.%m.%Y') }}</p>
+                            <h5><i class="fas fa-birthday-cake"></i> Категория</h5>
+                            <p class="fs-5">{{ athlete.category }}</p>
                         </div>
                     </div>
                     {% endif %}

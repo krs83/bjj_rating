@@ -1,12 +1,16 @@
 from typing import List
 
+from sqlalchemy.exc import IntegrityError
+
 from backend.src.exceptions.athlete import AthleteNotFoundException
+from backend.src.exceptions.athlete_tournament_link import AthleteTournamentLinkIntegrityException
 from backend.src.models.athlete import (
     AthleteAdd,
     AthleteResponse,
     Athlete,
     AthleteUpdate,
 )
+from backend.src.models.athlete_tournament import AthleteTournamentLinkAdd
 from backend.src.services.base import BaseService
 
 
@@ -36,26 +40,78 @@ class AthleteService(BaseService):
 
         await self.repository.athletes.create_athlete(athlete)
 
+        try:
+            for t_ids in athlete_data.tournament_ids:
+
+                tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete.id,
+                                                                tournament_id=t_ids)
+
+                await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
+        except IntegrityError:
+            self.logger.error(AthleteTournamentLinkIntegrityException.ATHLETETOURNAMENTLINKNOTFOUNDTEXT)
+            raise AthleteTournamentLinkIntegrityException()
+
+        self.logger.info("Добавлена новая связь атлет-турнир")
         await self.repository.athletes.calculating_place()
+
         await self.session.refresh(athlete)
         self.logger.info("Добавлен новый спортсмен")
 
-        return AthleteResponse.model_validate(athlete)
+        return  AthleteResponse(
+            id=athlete.id,
+            fullname=athlete.fullname,
+            points=athlete.points,
+            place=athlete.place,
+            academy=athlete.academy,
+            category=athlete.category,
+            affiliation=athlete.affiliation,
+            tournament_ids=athlete_data.tournament_ids
+        )
 
     async def create_few_athletes(self, athlete_data: List[AthleteAdd]) -> List[AthleteResponse]:
         """Добавление списка новых спортсменов в БД"""
 
         athletes = await self.find_existing_athlete(athlete_data)
+        # print(f"{athlete_data=}")
+        # print(f"{athletes=}")
 
         await self.repository.athletes.create_few_athletes(athletes)
 
-        await self.repository.athletes.calculating_place()
+        try:
+            for athlete_add, athlete_db in zip(athlete_data, athletes):
+                for t_id in athlete_add.tournament_ids:
+                    # print(f"{athlete_add=}")
+                    # print(f"{athlete_db=}")
 
-        for athlete in athletes:
-            await self.session.refresh(athlete)
-        self.logger.info("Массовое добавление спортсменов")
+                    tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete_db.id,
+                                                                tournament_id=t_id)
 
-        return [AthleteResponse.model_validate(athlete) for athlete in athletes]
+                    await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
+                    await self.repository.athletes.calculating_place()
+
+                    for athlete in athletes:
+                        await self.session.refresh(athlete)
+                    self.logger.info("Массовое добавление спортсменов")
+        except IntegrityError:
+            self.logger.error(AthleteTournamentLinkIntegrityException.ATHLETETOURNAMENTLINKNOTFOUNDTEXT)
+            raise AthleteTournamentLinkIntegrityException()
+
+        self.logger.info("Добавлены новые связи атлет-турнир")
+
+
+        return [
+            AthleteResponse(
+                id=athlete_db.id,
+                fullname=athlete_add.fullname,
+                category=athlete_add.category,
+                academy=athlete_add.academy,
+                affiliation=athlete_add.affiliation,
+                points=athlete_add.points,
+                place=athlete_db.place,
+                tournament_ids=athlete_add.tournament_ids
+            )
+            for athlete_add, athlete_db in zip(athlete_data, athletes)
+        ]
 
     async def part_update_athlete(self, athlete_id: int, athlete_data: AthleteUpdate) -> AthleteResponse:
         """Частичное или полное обновление данных о спортсмене по его ID"""
@@ -113,6 +169,7 @@ class AthleteService(BaseService):
             self.logger.info("Добавлен новый спортсмен")
 
         return list_athletes
+
 
 
 
