@@ -1,5 +1,6 @@
 .gigaide/
-.env
+.env.local
+.env.docker
 .idea/
 bjj_rating.iml
 venv
