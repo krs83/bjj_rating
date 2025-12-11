@@ -15,7 +15,7 @@ def setup_admin(app) -> None:
         engine=engine,
         session_maker=session_maker_admin,
         authentication_backend=AdminAuth(secret_key=settings.SECRET_KEY),
-        title="BJJ RATING ADMINISTRATOR",
+        title=settings.SITENAME,
     )
 
     admin.add_view(UserAdmin)
