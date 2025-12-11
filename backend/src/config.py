@@ -21,10 +21,13 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_WEEKS: int
     API_V1_STR: str = "/api/v1"
 
-    ADMIN_LOGIN: str
-    ADMIN_PASSWORD: str
+    ADMIN_LOGIN: str | None = None
+    ADMIN_PASSWORD: str | None = None
 
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
+    HEADER_IMAGE: str = "/static/images/grand-slam.png"
+
+    #Для локально разработки .env.local, для докера - .env.docker
+    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env.local")
 
 
 settings = Settings()
