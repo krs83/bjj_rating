@@ -24,10 +24,14 @@ class Settings(BaseSettings):
     ADMIN_LOGIN: str | None = None
     ADMIN_PASSWORD: str | None = None
 
+    POSTGRES_PASSWORD: str | None = None
+    POSTGRES_USER: str | None = None
+    POSTGRES_DB: str | None = None
+
     HEADER_IMAGE: str = "/static/images/grand-slam.png"
 
     #Для локально разработки .env.local, для докера - .env.docker
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env.local")
+    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env.docker")
 
 
 settings = Settings()

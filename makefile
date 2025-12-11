@@ -9,7 +9,7 @@ runapp:
 	docker run -d \
     -p 8000:8000 \
     --network web \
-    --env-file .env \
+    --env-file .env.docker \
     --name lapela-container \
   	lapelarating:1.0
 
@@ -17,9 +17,7 @@ rundb:
 	docker run -d   --name postgres-db \
     --network web \
     -p 6432:5432 \
-    -e POSTGRES_PASSWORD=postgre \
-    -e POSTGRES_USER=postgres \
-    -e POSTGRES_DB=rating \
+    --env-file .env.docker \
     --volume pg_rating_data:/var/lib/postgresql/data \
     postgres:17
 
