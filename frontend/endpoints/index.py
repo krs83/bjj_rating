@@ -23,6 +23,7 @@ async def main_page(request: Request,
         {
             "request": request,
             "site_name": settings.SITENAME,
+            "header_image": settings.HEADER_IMAGE,
             "athletes": athletes
         }
     )

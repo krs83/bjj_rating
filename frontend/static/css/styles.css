@@ -128,3 +128,40 @@
 .text-center.py-4 i {
     margin-bottom: 1rem;
 }
+
+.jumbotron-hero {
+    min-height: 350px;
+    background: url('/static/images/header-banner.png') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.jumbotron-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 0.375rem;
+}
+
+.jumbotron-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+@media (min-width: 768px) {
+    .jumbotron-hero {
+        min-height: 400px;
+    }
+}
+
+@media (min-width: 992px) {
+    .jumbotron-hero {
+        min-height: 450px;
+    }
+}

@@ -3,15 +3,29 @@
 {% block title %}Главная - BJJ Rating{% endblock %}
 
 {% block content %}
+
 <div class="row">
     <div class="col-12">
-        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
-            <h1 class="display-4"><i class="fas fa-trophy"></i> {{ site_name }}</h1>
-            <p class="lead">Рейтинговая система для спортсменов бразильского джиу-джитсу</p>
-            <a class="btn btn-light btn-lg mt-3" href="/athletes"
-               hx-get="/athletes" hx-target="main" hx-push-url="true">
-                <i class="fas fa-users"></i> Все спортсмены
-            </a>
+        <div class="jumbotron text-white p-5 rounded mb-4 position-relative"
+             style="
+                    background: url('{{ header_image }}') no-repeat center 20%;
+                    background-size: 100%;
+                    background-attachment: local;">
+
+            <!-- Темный оверлей для читаемости текста -->
+            <div class="position-absolute top-0 start-0 w-100 h-100"
+                 style="background: rgba(0, 0, 0, 0.3);
+                        border-radius: 0.375rem;
+                        z-index: 0;"></div>
+
+            <!-- Контент поверх -->
+            <div class="position-relative" style="z-index: 1;">
+                <h1 class="display-4"><i class="fas fa-trophy"></i> {{ site_name }}</h1>
+                <a class="btn btn-light btn-lg mt-3" href="/athletes"
+                   hx-get="/athletes" hx-target="main" hx-push-url="true">
+                    <i class="fas fa-users"></i> Все спортсмены
+                </a>
+            </div>
         </div>
     </div>
 </div>
