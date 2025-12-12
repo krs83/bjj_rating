@@ -27,7 +27,7 @@ class Athlete(AthleteBase, table=True):
 class AthleteResponse(AthleteBase):
     id: int
     place: int
-    tournament_ids: list[int]
+    tournament_ids: list[int] | None = None
 
 
 class AthleteAdd(AthleteBase):
