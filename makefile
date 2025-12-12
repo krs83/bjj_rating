@@ -23,6 +23,7 @@ deli:
 runapp:
 	docker run -d \
     --network $(NETWORK) \
+    --restart unless-stopped \
     --env-file .env.docker \
     --name $(APP_CONTAINER) \
     --label "traefik.enable=true" \
@@ -41,6 +42,7 @@ rundb:
 	docker run -d \
     --name $(DB_CONTAINER) \
     --network $(NETWORK) \
+    --restart unless-stopped \
     --env-file .env.docker \
     --volume pg_rating_data:/var/lib/postgresql/data \
     postgres:17
