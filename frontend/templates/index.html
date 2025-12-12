@@ -8,23 +8,9 @@
     <div class="col-12">
         <div class="jumbotron text-white p-5 rounded mb-4 position-relative"
              style="
-                    background: url('{{ header_image }}') no-repeat center 20%;
-                    background-size: 100%;
+                    background: url('{{ header_image }}') no-repeat center 25%;
+                    background-size: cover;
                     background-attachment: local;">
-
-            <!-- Темный оверлей для читаемости текста -->
-            <div class="position-absolute top-0 start-0 w-100 h-100"
-                 style="background: rgba(0, 0, 0, 0.3);
-                        border-radius: 0.375rem;
-                        z-index: 0;"></div>
-
-            <!-- Контент поверх -->
-            <div class="position-relative" style="z-index: 1;">
-                <a class="btn btn-light btn-lg mt-3" href="/athletes/"
-                   hx-get="/athletes/" hx-target="main" hx-push-url="true">
-                    <i class="fas fa-users"></i> Все спортсмены
-                </a>
-            </div>
         </div>
     </div>
 </div>
@@ -48,4 +34,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
