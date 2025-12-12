@@ -1,10 +1,8 @@
-from datetime import date
 from typing import TYPE_CHECKING
 
 from sqlmodel import Field, SQLModel, String, Relationship
 
 from backend.src.models import AthleteTournamentLink
-from backend.src.models.tournament import TournamentResponse
 
 if TYPE_CHECKING:
     from backend.src.models import Tournament
@@ -39,7 +37,7 @@ class AthleteAdd(AthleteBase):
 
 class AthleteUpdate(SQLModel):
     fullname: str | None = None
-    category: date | None = None
+    category: str | None = None
     academy: str | None = None
     affiliation: str | None = None
     points: int | None = None
