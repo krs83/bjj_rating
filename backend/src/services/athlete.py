@@ -72,16 +72,12 @@ class AthleteService(BaseService):
         """Добавление списка новых спортсменов в БД"""
 
         athletes = await self.find_existing_athlete(athlete_data)
-        # print(f"{athlete_data=}")
-        # print(f"{athletes=}")
 
         await self.repository.athletes.create_few_athletes(athletes)
 
         try:
             for athlete_add, athlete_db in zip(athlete_data, athletes):
                 for t_id in athlete_add.tournament_ids:
-                    # print(f"{athlete_add=}")
-                    # print(f"{athlete_db=}")
 
                     tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete_db.id,
                                                                 tournament_id=t_id)
