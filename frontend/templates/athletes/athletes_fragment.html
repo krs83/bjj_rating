@@ -12,29 +12,29 @@
   <div class="col-12">
     <div class="btn-group" role="group" aria-label="Выбор количества записей">
       <a class="btn btn-outline-primary {% if limit == 10 %}active{% endif %}"
-         href="/athletes?offset=0&limit=10"
-         hx-get="/athletes?offset=0&limit=10"
+         href="/athletes/?offset=0&limit=10"
+         hx-get="/athletes/?offset=0&limit=10"
          hx-target="main"
          hx-push-url="true">
         10
       </a>
       <a class="btn btn-outline-primary {% if limit == 25 %}active{% endif %}"
-         href="/athletes?offset=0&limit=25"
-         hx-get="/athletes?offset=0&limit=25"
+         href="/athletes/?offset=0&limit=25"
+         hx-get="/athletes/?offset=0&limit=25"
          hx-target="main"
          hx-push-url="true">
         25
       </a>
       <a class="btn btn-outline-primary {% if limit == 50 %}active{% endif %}"
-         href="/athletes?offset=0&limit=50"
-         hx-get="/athletes?offset=0&limit=50"
+         href="/athletes/?offset=0&limit=50"
+         hx-get="/athletes/?offset=0&limit=50"
          hx-target="main"
          hx-push-url="true">
         50
       </a>
       <a class="btn btn-outline-primary {% if limit == 100 %}active{% endif %}"
-         href="/athletes?offset=0&limit=100"
-         hx-get="/athletes?offset=0&limit=100"
+         href="/athletes/?offset=0&limit=100"
+         hx-get="/athletes/?offset=0&limit=100"
          hx-target="main"
          hx-push-url="true">
         100
@@ -51,8 +51,8 @@
     {% if offset > 0 %}
     <li class="page-item">
       <a class="page-link"
-         href="/athletes?offset={{ offset - limit }}&limit={{ limit }}"
-         hx-get="/athletes?offset={{ offset - limit }}&limit={{ limit }}"
+         href="/athletes/?offset={{ offset - limit }}&limit={{ limit }}"
+         hx-get="/athletes/?offset={{ offset - limit }}&limit={{ limit }}"
          hx-target="main"
          hx-push-url="true">
         &laquo; Назад
@@ -63,8 +63,8 @@
     {% if athletes|length == limit %}
     <li class="page-item">
       <a class="page-link"
-         href="/athletes?offset={{ offset + limit }}&limit={{ limit }}"
-         hx-get="/athletes?offset={{ offset + limit }}&limit={{ limit }}"
+         href="/athletes/?offset={{ offset + limit }}&limit={{ limit }}"
+         hx-get="/athletes/?offset={{ offset + limit }}&limit={{ limit }}"
          hx-target="main"
          hx-push-url="true">
         Вперед &raquo;
