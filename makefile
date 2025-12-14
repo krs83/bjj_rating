@@ -1,7 +1,7 @@
 # ============================================
 # CONFIGURATION
 # ============================================
-IMAGE_NAME = lapelarating:1.0
+IMAGE_NAME = lapelarating:1.1
 APP_CONTAINER = lapela-container
 DB_CONTAINER = postgres-db
 NETWORK = web
