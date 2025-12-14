@@ -43,7 +43,7 @@ app.include_router(athlete_tournament_link_router, prefix=settings.API_V1_STR)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:8000", "https://lapelarating.ru"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
