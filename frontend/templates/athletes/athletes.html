@@ -43,6 +43,13 @@
          hx-push-url="true">
         100
       </a>
+      <a class="btn btn-outline-primary {% if limit == 500 %}active{% endif %}"
+         href="/athletes/?offset=0&limit=500"
+         hx-get="/athletes/?offset=0&limit=500"
+         hx-target="main"
+         hx-push-url="true">
+        500
+      </a>
     </div>
   </div>
 </div>

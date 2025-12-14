@@ -21,7 +21,7 @@ async def get_all_users(
         current_user: CurrentUser,
         user_service: user_serviceDP,
         offset: int = 0,
-        limit: int = Query(default=50, le=100),
+        limit: int = Query(default=50, le=500),
 ) -> Any:
     return await user_service.get_users(offset=offset, limit=limit)
 

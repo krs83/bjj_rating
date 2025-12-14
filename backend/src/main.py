@@ -18,7 +18,7 @@ from frontend.endpoints.index import router as index_router
 from backend.src.admin.setup import setup_admin
 from backend.src.config import settings
 
-app = FastAPI(title=settings.SITENAME, version="1.0.0")
+app = FastAPI(title=settings.SITENAME, version="1.1")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 

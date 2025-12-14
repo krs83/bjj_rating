@@ -21,7 +21,7 @@ router = APIRouter(prefix="/athletes", tags=["Спортсмены"])
 async def get_all_athletes(
     athlete_service: athlete_serviceDP,
     offset: int = Query(default=0, ge=0, description="Смещение для пагинации"),
-    limit: int = Query(default=50, le=100, description="Лимит записей на страницу"),
+    limit: int = Query(default=50, le=500, description="Лимит записей на страницу"),
 ) -> list[Athlete]:
     return await athlete_service.get_athletes(offset, limit)
 

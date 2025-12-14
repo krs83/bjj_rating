@@ -17,7 +17,7 @@ router = APIRouter(prefix="/tournaments", tags=["Турниры"])
 async def get_all_tournaments(
     tournament_service: tournament_serviceDP,
     offset: int = Query(default=0, ge=0, description="Смещение для пагинации"),
-    limit: int = Query(default=50, le=100, description="Лимит записей на страницу"),
+    limit: int = Query(default=50, le=500, description="Лимит записей на страницу"),
 ) -> list[Tournament]:
     return await tournament_service.get_tournaments(offset, limit)
 

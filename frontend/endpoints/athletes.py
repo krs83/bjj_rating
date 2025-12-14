@@ -19,7 +19,7 @@ async def get_all_athletes_html(
         request: Request,
         athlete_service: athlete_serviceDP,
         offset: int = Query(default=0, ge=0, description="Смещение для пагинации"),
-        limit: int = Query(default=50, le=100, description="Лимит записей на страницу"),
+        limit: int = Query(default=50, le=500, description="Лимит записей на страницу"),
 ):
     athletes = await athlete_service.get_athletes(offset, limit)
 
