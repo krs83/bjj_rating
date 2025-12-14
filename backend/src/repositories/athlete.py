@@ -7,9 +7,9 @@ from backend.src.repositories.base import BaseRepository
 class AthleteRepository(BaseRepository):
 
     async def get_athletes(self,
-                           offset: int,
-                           limit: int,
-                           order_by=Athlete.place.asc()) ->list[Athlete]:
+                          offset: int | None = None,
+                          limit: int | None = None,
+                          order_by=Athlete.place.asc()) ->list[Athlete]:
 
         result = await self._get_many(
             model=Athlete,
@@ -61,9 +61,7 @@ class AthleteRepository(BaseRepository):
         return result
 
     async def calculating_place(self) -> None:
-        athletes = await self.get_athletes(
-            offset=0, limit=100, order_by=Athlete.points.desc()
-        )
+        athletes = await self.get_athletes(order_by=Athlete.points.desc())
 
         for i, athlete in enumerate(athletes, start=1):
             athlete.place = i

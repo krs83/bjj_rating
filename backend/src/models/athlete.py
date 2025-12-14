@@ -26,13 +26,12 @@ class Athlete(AthleteBase, table=True):
 
 class AthleteResponse(AthleteBase):
     id: int
-    place: int
+    place: int | None = None
     tournament_ids: list[int] | None = None
 
 
 class AthleteAdd(AthleteBase):
     tournament_ids: list[int]
-
 
 
 class AthleteUpdate(SQLModel):

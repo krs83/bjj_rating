@@ -38,8 +38,8 @@ class BaseRepository:
         self,
         model: ColumnClauseType[T],
         link_model: ColumnClauseType[T] | None = None,
-        offset: int = 0,
-        limit: int = 100,
+        offset: int | None = None,
+        limit: int | None = None,
         order_by: Any | None = None,
         link: bool = False
     ) -> list[T]:

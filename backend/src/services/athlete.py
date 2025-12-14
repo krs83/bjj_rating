@@ -103,7 +103,7 @@ class AthleteService(BaseService):
                 academy=athlete_add.academy,
                 affiliation=athlete_add.affiliation,
                 points=athlete_add.points,
-                place=athlete_db.place,
+                place=athlete_db.place if athlete_db.place is not None else "-",
                 tournament_ids=athlete_add.tournament_ids
             )
             for athlete_add, athlete_db in zip(athlete_data, athletes)
