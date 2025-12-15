@@ -1,4 +1,3 @@
-{% set search_query = request.query_params.get('search', '') if request else '' %}
 
 <!-- athletes_fragment.html - только контент для HTMX -->
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -42,40 +41,7 @@
   </div>
 </div>
 
-<div class="row mb-3">
-  <div class="col-md-6">
-    <div class="input-group">
-      <span class="input-group-text">
-        <i class="fas fa-search"></i>
-      </span>
-      <input type="text"
-             class="form-control"
-             id="athlete-search"
-             placeholder="Поиск по имени спортсмена..."
-             name="search"
-             {% if search_query %}value="{{ search_query }}"{% endif %}>
-      <button class="btn btn-primary"
-              type="button"
-              hx-get="/athletes/?offset=0&limit={{ limit }}"
-              hx-target="main"
-              hx-push-url="true"
-              hx-include="#athlete-search"
-              hx-trigger="click, keyup[enter] from:#athlete-search">
-        <i class="fas fa-search"></i> Поиск
-      </button>
-      {% if search_query %}
-      <button class="btn btn-outline-secondary"
-              type="button"
-              hx-get="/athletes/?offset=0&limit={{ limit }}"
-              hx-target="main"
-              hx-push-url="true">
-        <i class="fas fa-times"></i> Сброс
-      </button>
-      {% endif %}
-    </div>
-    <small class="text-muted">Введите имя и нажмите поиск или Enter</small>
-  </div>
-</div>
+{% include "components/search.html" %}
 
 {% include "components/athletes_list.html" %}
 

@@ -42,6 +42,7 @@ async def get_all_athletes_html(
             "athletes": athletes,
             "offset": offset,
             "limit": limit,
+            "search": search or "",
         }
     )
 

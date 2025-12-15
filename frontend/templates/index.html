@@ -18,7 +18,10 @@
 <!-- Топ-25 спортсменов -->
 <div class="row">
     <div class="col-12">
-        <h2 class="mb-4"><i class="fas fa-crown"></i> Топ-25 спортсменов</h2>
+        <h2 class="mb-4"><i class="fas fa-crown"></i> Топ-10 спортсменов</h2>
+
+
+        {% include "components/search.html" %}
 
         {% include "components/athletes_list.html" %}
 
@@ -34,5 +37,7 @@
         </div>
     </div>
 </div>
+
+
 
 {% endblock %}

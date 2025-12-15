@@ -17,13 +17,14 @@ templates = Jinja2Templates(directory=f"{BASE_DIR}/frontend/templates/")
 @router.get("/", response_class=HTMLResponse)
 async def main_page(request: Request,
                     athlete_service: athlete_serviceDP):
-    athletes = await athlete_service.get_athletes(offset=0, limit=25)
+    athletes = await athlete_service.get_athletes(offset=0, limit=10)
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
             "site_name": settings.SITENAME,
             "header_image": settings.HEADER_IMAGE,
+            "limit": 25,
             "athletes": athletes
         }
     )
