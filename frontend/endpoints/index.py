@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import Request, Query
+from fastapi import Request
 from fastapi.routing import APIRouter
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -24,7 +24,7 @@ async def main_page(request: Request,
             "request": request,
             "site_name": settings.SITENAME,
             "header_image": settings.HEADER_IMAGE,
-            "limit": 25,
+            "limit": 10,
             "athletes": athletes
         }
     )

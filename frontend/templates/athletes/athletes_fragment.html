@@ -14,26 +14,31 @@
     <div class="btn-group" role="group" aria-label="Выбор количества записей">
       <a class="btn btn-outline-primary {% if limit == 10 %}active{% endif %}"
          href="/athletes/?offset=0&limit=10{% if search_query %}&search={{ search_query }}{% endif %}"
+         hx-get="/athletes/?offset=0&limit=10{% if search_query %}&search={{ search_query }}{% endif %}"
          hx-push-url="true">
         10
       </a>
       <a class="btn btn-outline-primary {% if limit == 25 %}active{% endif %}"
          href="/athletes/?offset=0&limit=25{% if search_query %}&search={{ search_query }}{% endif %}"
+         hx-get="/athletes/?offset=0&limit=25{% if search_query %}&search={{ search_query }}{% endif %}"
          hx-push-url="true">
         25
       </a>
       <a class="btn btn-outline-primary {% if limit == 50 %}active{% endif %}"
          href="/athletes/?offset=0&limit=50{% if search_query %}&search={{ search_query }}{% endif %}"
+         hx-get="/athletes/?offset=0&limit=50{% if search_query %}&search={{ search_query }}{% endif %}"
          hx-push-url="true">
         50
       </a>
       <a class="btn btn-outline-primary {% if limit == 100 %}active{% endif %}"
          href="/athletes/?offset=0&limit=100{% if search_query %}&search={{ search_query }}{% endif %}"
+         hx-get="/athletes/?offset=0&limit=100{% if search_query %}&search={{ search_query }}{% endif %}"
          hx-push-url="true">
         100
       </a>
-      <a class="btn btn-outline-primary {% if limit == 100 %}active{% endif %}"
+      <a class="btn btn-outline-primary {% if limit == 500 %}active{% endif %}"
          href="/athletes/?offset=0&limit=500{% if search_query %}&search={{ search_query }}{% endif %}"
+         hx-get="/athletes/?offset=0&limit=500{% if search_query %}&search={{ search_query }}{% endif %}"
          hx-push-url="true">
         500
       </a>
@@ -52,6 +57,7 @@
     <li class="page-item">
       <a class="page-link"
          href="/athletes/?offset={{ offset - limit }}&limit={{ limit }}{% if search_query %}&search={{ search_query }}{% endif %}"
+         hx-get="/athletes/?offset={{ offset - limit }}&limit={{ limit }}{% if search_query %}&search={{ search_query }}{% endif %}"
          hx-push-url="true">
         &laquo; Назад
       </a>
@@ -62,6 +68,7 @@
     <li class="page-item">
       <a class="page-link"
          href="/athletes/?offset={{ offset + limit }}&limit={{ limit }}{% if search_query %}&search={{ search_query }}{% endif %}"
+         hx-get="/athletes/?offset={{ offset + limit }}&limit={{ limit }}{% if search_query %}&search={{ search_query }}{% endif %}"
          hx-push-url="true">
         Вперед &raquo;
       </a>
@@ -71,8 +78,8 @@
     {% if search_query and athletes|length == 0 %}
     <div class="alert alert-info mt-3" role="alert">
       <i class="fas fa-info-circle"></i> По запросу "{{ search_query }}" ничего не найдено.
-      <a href="/athletes/?offset=0&limit={{ limit }}"
-         hx-get="/athletes/?offset=0&limit={{ limit }}"
+      <a href="/athletes/?offset=0&limit={{ limit }}{% if search_query %}&search={{ search_query }}{% endif %}"
+         hx-get="/athletes/?offset=0&limit={{ limit }}{% if search_query %}&search={{ search_query }}{% endif %}"
          hx-target="main"
          hx-push-url="true"
          class="alert-link">Показать всех</a>
