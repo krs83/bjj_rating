@@ -22,6 +22,13 @@ class BaseRepository:
         result = await self.session.exec(query)
         return result.first()
 
+    async def _get_many_by_conditions(
+            self, model: ColumnClauseType[T], *conditions: ColumnExpressionArgument[Any]
+    ) -> T | None:
+        query = select(model).where(*conditions)
+        result = await self.session.exec(query)
+        return result.all()
+
     async def _get_pk(self,
                       model: ColumnClauseType[T],
                       pk: int,

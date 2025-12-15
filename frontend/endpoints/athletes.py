@@ -20,8 +20,14 @@ async def get_all_athletes_html(
         athlete_service: athlete_serviceDP,
         offset: int = Query(default=0, ge=0, description="Смещение для пагинации"),
         limit: int = Query(default=50, le=500, description="Лимит записей на страницу"),
+        search: str = Query(default=None, description="Поиск спортсмена по имени"),
+
 ):
-    athletes = await athlete_service.get_athletes(offset, limit)
+    if search:
+        athletes = await athlete_service.search_athlete_byname(search)
+    else:
+        athletes = await athlete_service.get_athletes(offset, limit)
+
 
     # Проверяем HTMX запрос
     if request.headers.get("hx-request"):
@@ -35,7 +41,7 @@ async def get_all_athletes_html(
             "request": request,
             "athletes": athletes,
             "offset": offset,
-            "limit": limit
+            "limit": limit,
         }
     )
 

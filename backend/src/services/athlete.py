@@ -32,6 +32,16 @@ class AthleteService(BaseService):
         self.logger.info(f"Спортсмен с ID №{athlete_id} успешно получен")
         return athlete
 
+    async def search_athlete_byname(self, athlete_data: str) -> Athlete:
+        """Получение конкретного спортсмена по имени"""
+
+        athlete =  await self.repository.athletes.get_athlete_by_name(athlete_data)
+        if not athlete:
+            self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_data))
+            raise AthleteNotFoundException(athlete_data)
+        self.logger.info(f"Спортсмен с данными \"{athlete_data}\" успешно найден")
+        return athlete
+
     async def create_athlete(self, athlete_data: AthleteAdd) -> AthleteResponse:
         """Добавление записи в БД о новом спортсмене"""
 

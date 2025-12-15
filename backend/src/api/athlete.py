@@ -26,7 +26,7 @@ async def get_all_athletes(
     return await athlete_service.get_athletes(offset, limit)
 
 
-@router.get("/{athlete_id}",
+@router.get("/id/{athlete_id}",
             response_model=AthleteResponse,
             description="Получение спортсмена по ID",
             summary="Get athlete by ID")
@@ -34,6 +34,15 @@ async def get_one_athlete(
     athlete_service: athlete_serviceDP, athlete_id: int
 ) -> AthleteBase:
     return await athlete_service.get_athlete(athlete_id)
+
+@router.get("/search/{athlete_data}",
+            response_model=List[AthleteResponse],
+            description="Поиск спортсмена по имени",
+            summary="Search athlete by name")
+async def search_athlete_by_name(
+        athlete_service: athlete_serviceDP, athlete_data: str
+) -> AthleteBase:
+    return await athlete_service.search_athlete_byname(athlete_data)
 
 
 @router.post("",
