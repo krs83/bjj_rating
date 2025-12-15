@@ -10,7 +10,9 @@
   </head>
   <body hx-headers='{"X-Requested-With": "XMLHttpRequest"}' hx-target="main" hx-boost="true">
     <!-- Header -->
+    {% if not request.headers.get("hx-request") %}
     {% include "/components/header.html" %}
+    {% endif %}
 
     <!-- Main Content -->
     <main class="container-fluid py-4">
@@ -18,7 +20,9 @@
     </main>
 
     <!-- Footer -->
+    {% if not request.headers.get("hx-request") %}
     {% include "/components/footer.html" %}
+    {% endif %}
 
     <!-- Toast Container for Notifications -->
     <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
@@ -36,22 +40,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
 
-    <script>
-      console.log("=== HTMX DEBUG ===");
-      console.log("HTMX version:", htmx.version);
-      console.log("Body hx-target:", document.body.getAttribute('hx-target'));
-
-      // Проверка всех ссылок с пагинацией
-      document.addEventListener('click', function(e) {
-        if (e.target.closest('.page-link')) {
-          console.log("=== CLICK ON PAGINATION ===");
-          console.log("Target element:", e.target);
-          console.log("Has hx-get:", e.target.hasAttribute('hx-get'));
-          console.log("Parent has hx-get:", e.target.closest('[hx-get]'));
-          console.log("Href:", e.target.getAttribute('href') || e.target.closest('a').getAttribute('href'));
-          e.preventDefault(); // Чтобы не уходило сразу
-        }
-      });
-    </script>
   </body>
 </html>
