@@ -71,11 +71,11 @@ delapp:
 
 # Запустить Traefik
 runtraefik:
-	docker compose -f docker compose.traefik.yml up -d
+	cd ~/traefic/ && docker compose -f docker-compose.traefik.yml up -d
 
 # Остановить Traefik
 stoptraefik:
-	docker compose -f docker compose.traefik.yml down
+	cd ~/traefic/ && docker compose -f docker-compose.traefik.yml down
 
 # Перезапустить Traefik
 restarttraefik: stoptraefik runtraefik
