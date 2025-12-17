@@ -47,8 +47,6 @@ rundb:
     --volume pg_rating_data:/var/lib/postgresql/data \
     postgres:17
 
-# Запустить всё (БД + приложение)
-runall: rundb runapp
 
 # Показать логи приложения
 logs:
@@ -66,18 +64,6 @@ migrate:
 delapp:
 	docker rm -f $(APP_CONTAINER)
 
-# Удалить базу данных
-deldb:
-	docker rm -f $(DB_CONTAINER)
-
-# Удалить всё
-delall: delapp deldb
-
-# Перезапустить приложение
-restart: delapp runapp
-
-# Перезапустить всё
-restartall: delall runall
 
 # ============================================
 # TRAEFIK COMMANDS
@@ -85,11 +71,11 @@ restartall: delall runall
 
 # Запустить Traefik
 runtraefik:
-	cd ~/traefik && docker-compose -f docker-compose.traefik.yml up -d
+	docker-compose -f docker compose.traefik.yml up -d
 
 # Остановить Traefik
 stoptraefik:
-	cd ~/traefik && docker-compose -f docker-compose.traefik.yml down
+	docker-compose -f docker compose.traefik.yml down
 
 # Перезапустить Traefik
 restarttraefik: stoptraefik runtraefik
@@ -119,9 +105,6 @@ checkssl:
 	@echo "Проверка SSL для $(DOMAIN)..."
 	@echo | openssl s_client -connect $(DOMAIN):443 -servername $(DOMAIN) 2>/dev/null | openssl x509 -noout -dates || echo "SSL не настроен"
 
-# Очистить всё (опасно!)
-clean:
-	docker system prune -af --volumes
 
 # Показать help
 help:
@@ -131,9 +114,6 @@ help:
 	@echo "make create        - Собрать образ приложения"
 	@echo "make runapp        - Запустить приложение с Traefik"
 	@echo "make rundb         - Запустить PostgreSQL"
-	@echo "make runall        - Запустить всё"
-	@echo "make restart       - Перезапустить приложение"
-	@echo "make restartall    - Перезапустить всё"
 	@echo ""
 	@echo "=== Traefik ==="
 	@echo "make runtraefik    - Запустить Traefik"
@@ -145,5 +125,4 @@ help:
 	@echo "make logs          - Показать логи приложения"
 	@echo "make migrate       - Выполнить миграции БД"
 	@echo "make checkssl      - Проверить SSL сертификат"
-	@echo "make delapp/deldb  - Удалить контейнеры"
-	@echo "make clean         - Очистить всё (осторожно!)"
+
