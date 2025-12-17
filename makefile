@@ -71,11 +71,11 @@ delapp:
 
 # Запустить Traefik
 runtraefik:
-	docker-compose -f docker compose.traefik.yml up -d
+	docker compose -f docker compose.traefik.yml up -d
 
 # Остановить Traefik
 stoptraefik:
-	docker-compose -f docker compose.traefik.yml down
+	docker compose -f docker compose.traefik.yml down
 
 # Перезапустить Traefik
 restarttraefik: stoptraefik runtraefik
@@ -114,11 +114,13 @@ help:
 	@echo "make create        - Собрать образ приложения"
 	@echo "make runapp        - Запустить приложение с Traefik"
 	@echo "make rundb         - Запустить PostgreSQL"
+	@echo "make runall        - Запустить всё"
 	@echo ""
 	@echo "=== Traefik ==="
 	@echo "make runtraefik    - Запустить Traefik"
 	@echo "make stoptraefik   - Остановить Traefik"
 	@echo "make logstraefik   - Показать логи Traefik"
+	@echo "make restarttraefik   - Перезапустить Traefik"
 	@echo ""
 	@echo "=== Утилиты ==="
 	@echo "make ps            - Показать контейнеры"
