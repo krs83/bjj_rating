@@ -1,9 +1,11 @@
 # ============================================
 # CONFIGURATION
 # ============================================
-IMAGE_NAME = lapelarating:1.2.3
+IMAGE_NAME = lapelarating:1.2.4
 APP_CONTAINER = lapela-container
 DB_CONTAINER = postgres-db
+DB_USER = lapela-db-user
+DB_NAME = lapelarating
 NETWORK = web
 DOMAIN = lapelarating.ru
 
@@ -47,6 +49,10 @@ rundb:
     --volume pg_rating_data:/var/lib/postgresql/data \
     postgres:17
 
+backup:
+	docker exec -t $(DB_CONTAINER) pg_dump -U $(DB_USER) $(DB_NAME) > \
+	~/sites/lapelarating/backups/$(DB_NAME)_$$(date +%Y%m%d_%H%M%S).sql
+
 
 # Показать логи приложения
 logs:
@@ -84,9 +90,6 @@ restarttraefik: stoptraefik runtraefik
 logstraefik:
 	docker logs traefik
 
-# Проверить конфигурацию Traefik
-checktraefik:
-	curl -s http://localhost:8080/api/rawdata | jq . 2>/dev/null || echo "Traefik dashboard недоступен"
 
 # ============================================
 # UTILITY COMMANDS
