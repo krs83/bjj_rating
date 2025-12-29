@@ -19,11 +19,12 @@ class AthleteRepository(BaseRepository):
 
         result = await self._get_many(
             model=Athlete,
+            conditions=[Athlete.is_active == True],
+            link_model=Athlete.tournaments,
             offset=offset,
             limit=limit,
             order_by=order_by,
-            link_model=Athlete.tournaments,
-            link=True
+            link=True,
         )
         return result
 

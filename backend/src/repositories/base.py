@@ -44,19 +44,30 @@ class BaseRepository:
     async def _get_many(
         self,
         model: ColumnClauseType[T],
+        conditions: list[ColumnExpressionArgument[Any]] | None = None,
         link_model: ColumnClauseType[T] | None = None,
         offset: int | None = None,
         limit: int | None = None,
         order_by: Any | None = None,
-        link: bool = False
+        link: bool = False,
     ) -> list[T]:
         query = select(model)
+
+        if conditions:
+            query = query.where(*conditions)
+
         if order_by is not None:
             query = query.order_by(order_by)
+
         if link:
             query = query.options(selectinload(link_model))
 
-        query = query.offset(offset).limit(limit)
+        if limit is not None:
+            query = query.limit(limit)
+
+        if offset is not None:
+            query = query.offset(offset)
+
         result = await self.session.exec(query)
         return result.all()
 
