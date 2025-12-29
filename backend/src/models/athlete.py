@@ -17,7 +17,9 @@ class AthleteBase(SQLModel):
 
 class Athlete(AthleteBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    is_active: bool = Field(default=True)
     place: int | None = Field(default=None)
+
 
     tournaments: list["Tournament"] = Relationship(
         back_populates="athletes",  link_model=AthleteTournamentLink

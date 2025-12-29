@@ -136,17 +136,17 @@ class AthleteService(BaseService):
 
         return AthleteResponse.model_validate(db_athlete)
 
-    async def del_athlete(self, athlete_id: int) -> bool:
-        """Удаление записи о спортсмене из БД по его ID"""
+    async def soft_del_athlete(self, athlete_id: int) -> dict:
+        """Мягкое удаление записи о спортсмене из БД по его ID"""
 
-        athlete =  await self.repository.athletes.delete_athlete(athlete_id)
+        athlete =  await self.repository.athletes.soft_delete_athlete(athlete_id)
         await self.repository.athletes.calculating_place()
         if not athlete:
             self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))
             raise AthleteNotFoundException(athlete_id)
-        self.logger.info(f"Спортсмен с ID №{athlete_id} успешно удалён")
+        self.logger.info(f"Спортсмен с ID №{athlete_id} помечен как неактивный")
 
-        return athlete
+        return {"message": f"Спортсмен с ID №{athlete_id} помечен как неактивный"}
 
 
     async def find_existing_athlete(self, athletes_data: AthleteAdd | List[AthleteAdd]) -> List[Athlete]:
