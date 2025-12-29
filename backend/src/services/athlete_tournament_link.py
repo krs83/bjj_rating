@@ -9,15 +9,15 @@ from backend.src.services.base import BaseService
 
 class AthleteTournamentLinkService(BaseService):
 
-    # async def get_tournaments(self, offset: int, limit: int) -> list[Tournament]:
-    #     """Получение всех турниров из БД согласно выборке"""
-    #     self.logger.info("Получен список всех турниров из БД согласно выборке")
-    #
-    #     return await self.repository.tournaments.get_tournaments(offset=offset, limit=limit)
-    #
+    async def get_athlete_tournament_links(self, offset: int, limit: int) -> list[AthleteTournamentLink]:
+        """Получение всех связей спортсменов-турниров из БД согласно выборке"""
+        self.logger.info("Получен список всех связей спортсменов-турниров из БД согласно выборке")
+
+        return await self.repository.athlete_tournament_links.get_athlete_tournament_links(offset, limit)
+
     # async def get_tournament(self, tournament_id: int) -> Tournament:
     #     """Получение конкретного турнира по ID"""
-    #
+
     #     tournament =  await self.repository.tournaments.get_tournament_by_id(tournament_id)
     #     if not tournament:
     #         self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(tournament_id))

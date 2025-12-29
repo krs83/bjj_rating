@@ -5,6 +5,16 @@ from backend.src.repositories.base import BaseRepository
 
 class AthleteTournamentLinkRepository(BaseRepository):
 
+    async def get_athlete_tournament_links(self,
+                              offset: int,
+                              limit: int,
+                              order_by=AthleteTournamentLink.athlete_id.asc()) ->list[AthleteTournamentLink]:
+
+        result = await self._get_many(
+            model=AthleteTournamentLink, offset=offset, limit=limit, order_by=order_by
+        )
+        return result
+
     async def create_athlete_tournament_link(self,
                                              athlete_tournament_link_data: AthleteTournamentLinkAdd ) -> AthleteTournamentLink:
         link = AthleteTournamentLink.model_validate(athlete_tournament_link_data)
