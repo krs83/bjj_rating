@@ -1,11 +1,13 @@
+include .env.docker
+
 # ============================================
 # CONFIGURATION
 # ============================================
-IMAGE_NAME = lapelarating:1.2.4
+IMAGE_NAME = lapelarating:1.3.0
 APP_CONTAINER = lapela-container
 DB_CONTAINER = postgres-db
-DB_USER = lapela-db-user
-DB_NAME = lapelarating
+PG_NAME = $(DB_NAME)
+PG_USER = $(DB_USER)
 NETWORK = web
 DOMAIN = lapelarating.ru
 
@@ -50,8 +52,8 @@ rundb:
     postgres:17
 
 backup:
-	docker exec -t $(DB_CONTAINER) pg_dump -U $(DB_USER) $(DB_NAME) > \
-	~/sites/lapelarating/backups/$(DB_NAME)_$$(date +%Y%m%d_%H%M%S).sql
+	docker exec -t $(DB_CONTAINER) pg_dump -U $(PG_USER) $(PG_NAME) > \
+	~/sites/lapelarating/backups/$(PG_NAME)_$$(date +%Y%m%d_%H%M%S).sql
 
 
 # Показать логи приложения
@@ -89,6 +91,21 @@ restarttraefik: stoptraefik runtraefik
 # Показать логи Traefik
 logstraefik:
 	docker logs traefik
+
+
+# ============================================
+# TESTS
+# ============================================
+
+all_test:
+	pytest -v -s
+
+unit_test:
+	pytest test/unit_test/ -v
+
+integration_test:
+	pytest test/integration_test/ -v
+
 
 
 # ============================================
