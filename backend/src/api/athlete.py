@@ -78,9 +78,17 @@ async def update_athlete(
     return await athlete_service.part_update_athlete(athlete_id, athlete_data)
 
 
-@router.get("/{athlete_id}",
+@router.delete("/{athlete_id}",
                dependencies=[Depends(get_current_admin)],
                description="Мягкое удаление записи о спортсмене из БД по ID",
                summary="Soft delete athlete by ID")
 async def soft_del_athlete(athlete_service: athlete_serviceDP, athlete_id: int) -> dict:
     return await athlete_service.soft_del_athlete(athlete_id)
+
+
+@router.patch("/restore/{athlete_id}",
+               dependencies=[Depends(get_current_admin)],
+               description="Восстановление записи о спортсмене в БД по ID",
+               summary="Restore athlete by ID")
+async def restore_athlete(athlete_service: athlete_serviceDP, athlete_id: int) -> dict:
+    return await athlete_service.restoring_athlete(athlete_id)

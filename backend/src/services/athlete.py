@@ -148,6 +148,18 @@ class AthleteService(BaseService):
 
         return {"message": f"Спортсмен с ID №{athlete_id} помечен как неактивный"}
 
+    async def restoring_athlete(self, athlete_id: int) -> dict:
+        """Восстановление записи о спортсмене по его ID"""
+
+        athlete =  await self.repository.athletes.restore_athlete(athlete_id)
+        await self.repository.athletes.calculating_place()
+        if not athlete:
+            self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))
+            raise AthleteNotFoundException(athlete_id)
+        self.logger.info(f"Спортсмен с ID №{athlete_id} восстановлен и помечен как активный")
+
+        return {"message": f"Спортсмен с ID №{athlete_id} восстановлен и помечен как активный"}
+
 
     async def find_existing_athlete(self, athletes_data: AthleteAdd | List[AthleteAdd]) -> List[Athlete]:
         """Если будет совпадение по имени, ДР и региону, новый спортсмен не добавляется\n

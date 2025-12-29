@@ -76,6 +76,15 @@ class AthleteRepository(BaseRepository):
             else:
                 return None
 
+    async def restore_athlete(self, athlete_id: int) -> Athlete | None:
+        result = await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
+        if result:
+            result.is_active = True
+            await self.session.commit()
+            return result
+        else:
+            return None
+
     async def calculating_place(self) -> None:
         athletes = await self.get_athletes(order_by=Athlete.points.desc())
 
