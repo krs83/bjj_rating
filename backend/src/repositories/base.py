@@ -34,8 +34,9 @@ class BaseRepository:
                       pk: int,
                       link_model: ColumnClauseType[T] | None = None,
                       link: bool = False) -> T | None:
+
         if link:
-            query = select(model).options(selectinload(link_model)).where(model.id == pk)
+            query = select(model).options(selectinload(link_model)).where(model.id == pk).where(model.is_active == True)
             result = await self.session.exec(query)
             return result.first()
 
