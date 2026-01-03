@@ -26,6 +26,19 @@ async def get_all_athletes(
     return await athlete_service.get_athletes(offset, limit)
 
 
+@router.get("/admin",
+            dependencies=[Depends(get_current_admin)],
+            response_model=list[AthleteResponse],
+            description="Получение списка всех спортсменов, включая неактивных",
+            summary="Get all athletes list including not active")
+async def admin_get_all_athletes(
+        athlete_service: athlete_serviceDP,
+        offset: int = Query(default=0, ge=0, description="Смещение для пагинации"),
+        limit: int = Query(default=50, le=500, description="Лимит записей на страницу"),
+) -> list[Athlete]:
+    return await athlete_service.admin_get_athletes(offset, limit)
+
+
 @router.get("/id/{athlete_id}",
             response_model=AthleteResponse,
             description="Получение спортсмена по ID",
@@ -34,6 +47,16 @@ async def get_one_athlete(
     athlete_service: athlete_serviceDP, athlete_id: int
 ) -> AthleteBase:
     return await athlete_service.get_athlete(athlete_id)
+
+@router.get("/admin/id/{athlete_id}",
+            dependencies=[Depends(get_current_admin)],
+            response_model=AthleteResponse,
+            description="Получение спортсмена по ID, включая неактивного",
+            summary="Get athlete by ID including not active")
+async def admin_get_one_athlete(
+        athlete_service: athlete_serviceDP, athlete_id: int
+) -> AthleteBase:
+    return await athlete_service.admin_get_athlete(athlete_id)
 
 @router.get("/search/{athlete_data}",
             response_model=List[AthleteResponse],

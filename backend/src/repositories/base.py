@@ -33,19 +33,27 @@ class BaseRepository:
                       model: ColumnClauseType[T],
                       pk: int,
                       link_model: ColumnClauseType[T] | None = None,
-                      link: bool = False) -> T | None:
+                      link: bool = False,
+                      is_admin=False) -> T | None:
 
-        if link:
-            query = select(model).options(selectinload(link_model)).where(model.id == pk).where(model.is_active == True)
-            result = await self.session.exec(query)
-            return result.first()
+        if not link:
+            return await self.session.get(model, pk)
 
-        return await self.session.get(model, pk)
+        query = select(model).where(model.id == pk)
+
+        if not is_admin:
+            query = query.where(model.is_active == True)
+
+        if link_model:
+            query = query.options(selectinload(link_model))
+
+        result = await self.session.exec(query)
+        return result.first()
 
     async def _get_many(
         self,
         model: ColumnClauseType[T],
-        conditions: list[ColumnExpressionArgument[Any]] | None = None,
+        conditions: list[Any] | None = None,
         link_model: ColumnClauseType[T] | None = None,
         offset: int | None = None,
         limit: int | None = None,

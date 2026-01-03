@@ -30,6 +30,7 @@ class AthleteResponse(AthleteBase):
     id: int
     place: int | None = None
     tournament_ids: list[int] | None = None
+    is_active: bool
 
 
 class AthleteAdd(AthleteBase):

@@ -22,6 +22,12 @@ class AthleteService(BaseService):
 
         return await self.repository.athletes.get_athletes(offset=offset, limit=limit)
 
+    async def admin_get_athletes(self, offset: int, limit: int) -> list[Athlete]:
+        """Получение всех спортсменов из БД согласно выборке, включая неактивных"""
+        self.logger.info("Получен список всех спортсменов из БД согласно выборке, включая неактивных")
+
+        return await self.repository.athletes.get_athletes(offset=offset, limit=limit, is_admin=True)
+
     async def get_athlete(self, athlete_id: int) -> Athlete:
         """Получение конкретного спортсмена по ID"""
 
@@ -30,6 +36,16 @@ class AthleteService(BaseService):
             self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))
             raise AthleteNotFoundException(athlete_id)
         self.logger.info(f"Спортсмен с ID №{athlete_id} успешно получен")
+        return athlete
+
+    async def admin_get_athlete(self, athlete_id: int) -> Athlete:
+        """Получение конкретного спортсмена по ID, включая неактивного"""
+
+        athlete =  await self.repository.athletes.admin_get_athlete_by_id(athlete_id)
+        if not athlete:
+            self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))
+            raise AthleteNotFoundException(athlete_id)
+        self.logger.info(f"Спортсмен с ID №{athlete_id} (НЕАКТИВНЫЙ) успешно получен")
         return athlete
 
     async def search_athlete_byname(self, athlete_data: str) -> Athlete:

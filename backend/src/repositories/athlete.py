@@ -11,25 +11,41 @@ class AthleteRepository(BaseRepository):
     async def get_athletes(self,
                            offset: int | None = None,
                            limit: int | None = None,
-                           order_by=None) -> list[Athlete]:
+                           order_by=None,
+                           is_admin=False) -> list[Athlete]:
 
         if order_by is None:
             order_by = asc(Athlete.place)
 
-
-        result = await self._get_many(
-            model=Athlete,
-            conditions=[Athlete.is_active == True],
-            link_model=Athlete.tournaments,
-            offset=offset,
-            limit=limit,
-            order_by=order_by,
-            link=True,
-        )
-        return result
+        if is_admin:
+            return await self._get_many(
+                model=Athlete,
+                link_model=Athlete.tournaments,
+                offset=offset,
+                limit=limit,
+                order_by=order_by,
+                link=True,
+            )
+        else:
+            return await self._get_many(
+                model=Athlete,
+                conditions=[Athlete.is_active == True],# is not admin
+                link_model=Athlete.tournaments,
+                offset=offset,
+                limit=limit,
+                order_by=order_by,
+                link=True,
+            )
 
     async def get_athlete_by_id(self, athlete_id: int) -> Athlete:
         return await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
+
+    async def admin_get_athlete_by_id(self, athlete_id: int) -> Athlete:
+        return await self._get_pk(model=Athlete,
+                                  pk=athlete_id,
+                                  link_model=Athlete.tournaments,
+                                  link=True,
+                                  is_admin=True)
 
     async def get_athlete_by_conditions(self, athlete_data: AthleteAdd) -> Athlete:
         return await self._get_one(
