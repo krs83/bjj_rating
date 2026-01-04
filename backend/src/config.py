@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -29,6 +30,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str | None = None
 
     HEADER_IMAGE: str = "/static/images/grand-slam.png"
+    CURRENT_YEAR: int = datetime.now().year
 
     #Для локально разработки .env.local, для докера - .env.docker
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env.local")
