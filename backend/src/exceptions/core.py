@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
@@ -11,7 +12,11 @@ templates = Jinja2Templates(directory=f"{BASE_DIR}/frontend/templates/")
 
 
 def not_found_error(request: Request, exc: HTTPException):
-    print(f"{BASE_DIR}")
+    if "/api/" in request.url.path:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": exc.detail}
+        )
     return templates.TemplateResponse(
         "errors/404.html",
         {"request": request,
