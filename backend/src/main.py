@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +20,7 @@ from frontend.endpoints.index import router as index_router
 
 from backend.src.admin.setup import setup_admin
 from backend.src.config import settings
-from backend.src.exceptions.core import not_found_error
+from backend.src.exceptions.core import not_found_error, validation_exception_handler
 
 app = FastAPI(title=settings.SITENAME, version="1.3.0")
 
@@ -36,6 +37,15 @@ async def html_404(request: Request, exc: HTTPException):
             content={"error": exc.detail}
         )
 
+@app.exception_handler(RequestValidationError)
+async def html_404(request: Request, exc: HTTPException):
+    if not "/api/" in request.url.path:
+        return validation_exception_handler(request, exc)
+    else:
+        return JSONResponse(
+            status_code=404,
+            content={"error": exc.detail}
+        )
 
 app.add_middleware(
     CORSMiddleware,
