@@ -53,8 +53,7 @@ class AthleteService(BaseService):
 
         athlete =  await self.repository.athletes.get_athlete_by_name(athlete_data)
         if not athlete:
-            self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_data))
-            raise AthleteNotFoundException(athlete_data)
+            return []
         self.logger.info(f"Спортсмен с данными \"{athlete_data}\" успешно найден")
         return athlete
 
