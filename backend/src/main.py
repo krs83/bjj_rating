@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
@@ -20,14 +21,21 @@ from backend.src.admin.setup import setup_admin
 from backend.src.config import settings
 from backend.src.exceptions.core import not_found_error
 
-app = FastAPI(title=settings.SITENAME, version="1.1")
+app = FastAPI(title=settings.SITENAME, version="1.3.0")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 #global errors handling
 @app.exception_handler(404)
 async def html_404(request: Request, exc: HTTPException):
-    return not_found_error(request, exc)
+    if not "/api/" in request.url.path:
+        return not_found_error(request, exc)
+    else:
+        return JSONResponse(
+            status_code=404,
+            content={"error": exc.detail}
+        )
+
 
 app.add_middleware(
     CORSMiddleware,
