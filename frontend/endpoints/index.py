@@ -23,7 +23,7 @@ async def main_page(request: Request,
         {
             "request": request,
             "site_name": settings.SITENAME,
-            "current_year": settings.CURRENT_YEAR,
+            "current_year": settings.current_year,
             "header_image": settings.HEADER_IMAGE,
             "limit": 10,
             "athletes": athletes

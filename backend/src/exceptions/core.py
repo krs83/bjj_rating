@@ -17,5 +17,7 @@ def not_found_error(request: Request, exc: HTTPException):
         {"request": request,
          "status_code": exc.status_code,
          "detail": exc.detail,
+         "site_name": settings.SITENAME,
+         "current_year": settings.current_year,
          "header_image": settings.HEADER_IMAGE,}
     )

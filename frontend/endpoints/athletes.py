@@ -44,7 +44,8 @@ async def get_all_athletes_html(
             "offset": offset,
             "limit": limit,
             "search_query": search or "",
-            "current_year": settings.CURRENT_YEAR,
+            "site_name": settings.SITENAME,
+            "current_year": settings.current_year,
         }
     )
 
@@ -75,6 +76,7 @@ async def get_athlete_detail(
         {
             "request": request,
             "athlete": athlete,
-            "current_year": settings.CURRENT_YEAR,
+            "site_name": settings.SITENAME,
+            "current_year": settings.current_year,
         }
     )

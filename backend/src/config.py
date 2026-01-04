@@ -30,7 +30,10 @@ class Settings(BaseSettings):
     POSTGRES_DB: str | None = None
 
     HEADER_IMAGE: str = "/static/images/grand-slam.png"
-    CURRENT_YEAR: int = datetime.now().year
+
+    @property
+    def current_year(self) -> int:
+        return datetime.now().year
 
     #Для локально разработки .env.local, для докера - .env.docker
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env.local")
