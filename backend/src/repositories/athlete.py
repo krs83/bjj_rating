@@ -17,25 +17,15 @@ class AthleteRepository(BaseRepository):
         if order_by is None:
             order_by = asc(Athlete.place)
 
-        if is_admin:
-            return await self._get_many(
-                model=Athlete,
-                link_model=Athlete.tournaments,
-                offset=offset,
-                limit=limit,
-                order_by=order_by,
-                link=True,
-            )
-        else:
-            return await self._get_many(
-                model=Athlete,
-                conditions=[Athlete.is_active == True],# is not admin
-                link_model=Athlete.tournaments,
-                offset=offset,
-                limit=limit,
-                order_by=order_by,
-                link=True,
-            )
+        return await self._get_many(
+            model=Athlete,
+            conditions=None if is_admin else [Athlete.is_active == True],
+            link_model=Athlete.tournaments,
+            offset=offset,
+            limit=limit,
+            order_by=order_by,
+            link=True,
+        )
 
     async def get_athlete_by_id(self, athlete_id: int) -> Athlete:
         return await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
