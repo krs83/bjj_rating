@@ -3,6 +3,7 @@ from typing import List
 from sqlalchemy.exc import IntegrityError
 
 from backend.src.exceptions.athlete import AthleteNotFoundException
+from backend.src.exceptions.tournament import TournamentNotFoundException
 from backend.src.exceptions.athlete_tournament_link import AthleteTournamentLinkIntegrityException
 from backend.src.models.athlete import (
     AthleteCreate,
@@ -57,17 +58,16 @@ class AthleteService(BaseService):
         self.logger.info(f"Спортсмен с данными \"{athlete_data}\" успешно найден")
         return athlete
 
-    #проверка правильный ли id турнира
-    # try:
-    #     for t_id in athlete_data.tournament_ids:
-    #         print(f"{t_id=}")
-    #         await self.repository.tournaments.get_tournament_by_id(t_id)
-    # except IntegrityError:
-    #     self.logger.error("here error")
-
-
     async def create_athlete(self, athlete_data: AthleteCreate) -> AthleteResponse:
         """Добавление записи в БД о новом спортсмене"""
+
+        #проверка правильный ли id турнира
+        for t_id in athlete_data.tournament_ids:
+            tournament = await self.repository.tournaments.get_tournament_by_id(t_id)
+            if not tournament:
+                self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
+                raise TournamentNotFoundException(t_id)
+
 
         athletes = await self.find_existing_athlete(athlete_data)
         athlete = athletes[0]
@@ -81,15 +81,13 @@ class AthleteService(BaseService):
                                                                 tournament_id=t_id)
 
                 await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
+                await self.repository.athletes.calculating_place()
+                await self.session.refresh(athlete)
         except IntegrityError:
             self.logger.error(AthleteTournamentLinkIntegrityException.ATHLETETOURNAMENTLINKNOTFOUNDTEXT)
             raise AthleteTournamentLinkIntegrityException()
 
         self.logger.info("Добавлена новая связь атлет-турнир")
-
-        await self.repository.athletes.calculating_place()
-        await self.session.refresh(athlete)
-
         self.logger.info("Добавлен новый спортсмен")
 
         return AthleteResponse(
