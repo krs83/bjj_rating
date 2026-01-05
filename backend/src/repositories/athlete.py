@@ -2,7 +2,7 @@ from typing import Any, List
 
 from sqlmodel import asc
 
-from backend.src.models.athlete import Athlete, AthleteAdd
+from backend.src.models.athlete import Athlete, AthleteAdd, AthleteResponse
 from backend.src.repositories.base import BaseRepository
 
 
@@ -12,12 +12,12 @@ class AthleteRepository(BaseRepository):
                            offset: int | None = None,
                            limit: int | None = None,
                            order_by=None,
-                           is_admin=False) -> list[Athlete]:
+                           is_admin=False) -> list[AthleteResponse]:
 
         if order_by is None:
             order_by = asc(Athlete.place)
 
-        return await self._get_many(
+        athletes =  await self._get_many(
             model=Athlete,
             conditions=None if is_admin else [Athlete.is_active == True],
             link_model=Athlete.tournaments,
@@ -26,6 +26,8 @@ class AthleteRepository(BaseRepository):
             order_by=order_by,
             link=True,
         )
+
+        return [AthleteResponse.model_validate(athlete) for athlete in athletes]
 
     async def get_athlete_by_id(self, athlete_id: int) -> Athlete:
         return await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)

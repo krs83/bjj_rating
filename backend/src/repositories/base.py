@@ -1,5 +1,5 @@
-from typing import Any, cast, TypeVar
-from sqlalchemy import ColumnExpressionArgument
+from typing import Any, cast, TypeVar, Sequence
+from sqlalchemy import ColumnExpressionArgument, Row, RowMapping
 from sqlalchemy.orm import InstrumentedAttribute, selectinload
 from sqlmodel import select, delete
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -59,7 +59,7 @@ class BaseRepository:
         limit: int | None = None,
         order_by: Any | None = None,
         link: bool = False,
-    ) -> list[T]:
+    ) -> Sequence[Row[Any] | RowMapping | Any]:
         query = select(model)
 
         if conditions:

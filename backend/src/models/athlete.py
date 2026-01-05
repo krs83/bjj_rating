@@ -20,6 +20,10 @@ class Athlete(AthleteBase, table=True):
     is_active: bool = Field(default=True)
     place: int | None = Field(default=None)
 
+    @property
+    def tournament_ids(self) -> list[int]:
+        return [t.id for t in self.tournaments]
+
 
     tournaments: list["Tournament"] = Relationship(
         back_populates="athletes",  link_model=AthleteTournamentLink
