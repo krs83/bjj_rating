@@ -38,13 +38,13 @@ async def html_404(request: Request, exc: HTTPException):
         )
 
 @app.exception_handler(RequestValidationError)
-async def html_404(request: Request, exc: HTTPException):
+async def html_422(request: Request, exc: RequestValidationError):
     if not "/api/" in request.url.path:
         return validation_exception_handler(request, exc)
     else:
         return JSONResponse(
-            status_code=404,
-            content={"error": exc.detail}
+            status_code=422,
+            content={"error": exc.errors()}
         )
 
 app.add_middleware(

@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from backend.src.exceptions.athlete import AthleteNotFoundException
 from backend.src.exceptions.athlete_tournament_link import AthleteTournamentLinkIntegrityException
 from backend.src.models.athlete import (
-    AthleteAdd,
+    AthleteCreate,
     AthleteResponse,
     Athlete,
     AthleteUpdate,
@@ -48,7 +48,7 @@ class AthleteService(BaseService):
         self.logger.info(f"Спортсмен с ID №{athlete_id} (НЕАКТИВНЫЙ) успешно получен")
         return athlete
 
-    async def search_athlete_byname(self, athlete_data: str) -> Athlete:
+    async def search_athlete_by_name(self, athlete_data: str) -> Athlete | list:
         """Получение конкретного спортсмена по имени"""
 
         athlete =  await self.repository.athletes.get_athlete_by_name(athlete_data)
@@ -57,19 +57,28 @@ class AthleteService(BaseService):
         self.logger.info(f"Спортсмен с данными \"{athlete_data}\" успешно найден")
         return athlete
 
-    async def create_athlete(self, athlete_data: AthleteAdd) -> AthleteResponse:
+    #проверка правильный ли id турнира
+    # try:
+    #     for t_id in athlete_data.tournament_ids:
+    #         print(f"{t_id=}")
+    #         await self.repository.tournaments.get_tournament_by_id(t_id)
+    # except IntegrityError:
+    #     self.logger.error("here error")
+
+
+    async def create_athlete(self, athlete_data: AthleteCreate) -> AthleteResponse:
         """Добавление записи в БД о новом спортсмене"""
 
         athletes = await self.find_existing_athlete(athlete_data)
         athlete = athletes[0]
 
-        await self.repository.athletes.create_athlete(athlete)
+        athlete = await self.repository.athletes.create_athlete(athlete)
 
         try:
-            for t_ids in athlete_data.tournament_ids:
+            for t_id in athlete_data.tournament_ids:
 
                 tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete.id,
-                                                                tournament_id=t_ids)
+                                                                tournament_id=t_id)
 
                 await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
         except IntegrityError:
@@ -77,12 +86,13 @@ class AthleteService(BaseService):
             raise AthleteTournamentLinkIntegrityException()
 
         self.logger.info("Добавлена новая связь атлет-турнир")
-        await self.repository.athletes.calculating_place()
 
+        await self.repository.athletes.calculating_place()
         await self.session.refresh(athlete)
+
         self.logger.info("Добавлен новый спортсмен")
 
-        return  AthleteResponse(
+        return AthleteResponse(
             id=athlete.id,
             fullname=athlete.fullname,
             points=athlete.points,
@@ -90,10 +100,11 @@ class AthleteService(BaseService):
             academy=athlete.academy,
             category=athlete.category,
             affiliation=athlete.affiliation,
+            is_active=athlete.is_active,
             tournament_ids=athlete_data.tournament_ids
         )
 
-    async def create_few_athletes(self, athlete_data: List[AthleteAdd]) -> List[AthleteResponse]:
+    async def create_few_athletes(self, athlete_data: List[AthleteCreate]) -> List[AthleteResponse]:
         """Добавление списка новых спортсменов в БД"""
 
         athletes = await self.find_existing_athlete(athlete_data)
@@ -129,6 +140,7 @@ class AthleteService(BaseService):
                 affiliation=athlete_add.affiliation,
                 points=athlete_add.points,
                 place=athlete_db.place if athlete_db.place is not None else "-",
+                is_active=athlete_db.is_active,
                 tournament_ids=athlete_add.tournament_ids
             )
             for athlete_add, athlete_db in zip(athlete_data, athletes)
@@ -176,7 +188,7 @@ class AthleteService(BaseService):
         return {"message": f"Спортсмен с ID №{athlete_id} восстановлен и помечен как активный"}
 
 
-    async def find_existing_athlete(self, athletes_data: AthleteAdd | List[AthleteAdd]) -> List[Athlete]:
+    async def find_existing_athlete(self, athletes_data: AthleteCreate | List[AthleteCreate]) -> List[Athlete]:
         """Если будет совпадение по имени, ДР и региону, новый спортсмен не добавляется\n
        Только суммируются баллы\n
         В противном случае - добавляется новый спортсмен
@@ -198,8 +210,6 @@ class AthleteService(BaseService):
             else:
                 new_athlete = Athlete.model_validate(athlete_data)
                 list_athletes.append(new_athlete)
-
-            self.logger.info("Добавлен новый спортсмен")
 
         return list_athletes
 

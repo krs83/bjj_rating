@@ -1,8 +1,8 @@
 from typing import Any, List
 
-from sqlmodel import asc
+from sqlmodel import asc, desc
 
-from backend.src.models.athlete import Athlete, AthleteAdd, AthleteResponse
+from backend.src.models.athlete import Athlete, AthleteCreate
 from backend.src.repositories.base import BaseRepository
 
 
@@ -12,12 +12,12 @@ class AthleteRepository(BaseRepository):
                            offset: int | None = None,
                            limit: int | None = None,
                            order_by=None,
-                           is_admin=False) -> list[AthleteResponse]:
+                           is_admin=False) -> list[Athlete]:
 
         if order_by is None:
             order_by = asc(Athlete.place)
 
-        athletes =  await self._get_many(
+        return await self._get_many(
             model=Athlete,
             conditions=None if is_admin else [Athlete.is_active == True],
             link_model=Athlete.tournaments,
@@ -26,8 +26,6 @@ class AthleteRepository(BaseRepository):
             order_by=order_by,
             link=True,
         )
-
-        return [AthleteResponse.model_validate(athlete) for athlete in athletes]
 
     async def get_athlete_by_id(self, athlete_id: int) -> Athlete:
         return await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
@@ -39,7 +37,7 @@ class AthleteRepository(BaseRepository):
                                   link=True,
                                   is_admin=True)
 
-    async def get_athlete_by_conditions(self, athlete_data: AthleteAdd) -> Athlete:
+    async def get_athlete_by_conditions(self, athlete_data: AthleteCreate) -> Athlete:
         return await self._get_one(
             Athlete,
             Athlete.fullname == athlete_data.fullname,
@@ -95,7 +93,7 @@ class AthleteRepository(BaseRepository):
             return None
 
     async def calculating_place(self) -> None:
-        athletes = await self.get_athletes(order_by=Athlete.points.desc())
+        athletes = await self.get_athletes(order_by=desc(Athlete.points))
 
         for i, athlete in enumerate(athletes, start=1):
             athlete.place = i

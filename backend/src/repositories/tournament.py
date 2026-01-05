@@ -1,5 +1,7 @@
 from typing import Any
 
+from sqlmodel import asc
+
 from backend.src.models.tournament import Tournament
 from backend.src.repositories.base import BaseRepository
 
@@ -9,7 +11,7 @@ class TournamentRepository(BaseRepository):
     async def get_tournaments(self,
                            offset: int,
                            limit: int,
-                           order_by=Tournament.smoothcomp_date.asc()) ->list[Tournament]:
+                           order_by=asc(Tournament.smoothcomp_date)) ->list[Tournament]:
 
         result = await self._get_many(
             model=Tournament, offset=offset, limit=limit, order_by=order_by

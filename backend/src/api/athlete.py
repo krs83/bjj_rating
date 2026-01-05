@@ -4,7 +4,7 @@ from fastapi import APIRouter, Query, Depends
 
 from backend.src.dependencies import athlete_serviceDP, get_current_admin
 from backend.src.models.athlete import (
-    AthleteAdd,
+    AthleteCreate,
     AthleteResponse,
     AthleteBase,
     AthleteUpdate,
@@ -65,7 +65,7 @@ async def admin_get_one_athlete(
 async def search_athlete_by_name(
         athlete_service: athlete_serviceDP, athlete_data: str
 ) -> AthleteBase:
-    return await athlete_service.search_athlete_byname(athlete_data)
+    return await athlete_service.search_athlete_by_name(athlete_data)
 
 
 @router.post("",
@@ -74,7 +74,7 @@ async def search_athlete_by_name(
              description="Добавление записи о спортсмене в БД",
              summary="Add athlete to DB")
 async def add_athlete(
-    athlete_service: athlete_serviceDP, athlete_data: AthleteAdd
+    athlete_service: athlete_serviceDP, athlete_data: AthleteCreate
 ) -> AthleteBase:
     return await athlete_service.create_athlete(athlete_data)
 
@@ -85,7 +85,7 @@ async def add_athlete(
              description="Добавление списка записей о спортсменах в БД",
              summary="Add athletes list to DB")
 async def add_few_athletes(
-        athlete_service: athlete_serviceDP, athlete_data: List[AthleteAdd]
+        athlete_service: athlete_serviceDP, athlete_data: List[AthleteCreate]
 ) -> List[AthleteResponse]:
     return await athlete_service.create_few_athletes(athlete_data)
 

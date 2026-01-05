@@ -25,7 +25,7 @@ async def get_all_athletes_html(
 
 ):
     if search:
-        athletes = await athlete_service.search_athlete_byname(search)
+        athletes = await athlete_service.search_athlete_by_name(search)
     else:
         athletes = await athlete_service.get_athletes(offset, limit)
 

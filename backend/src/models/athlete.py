@@ -37,8 +37,9 @@ class AthleteResponse(AthleteBase):
     is_active: bool
 
 
-class AthleteAdd(AthleteBase):
+class AthleteCreate(AthleteBase):
     tournament_ids: list[int]
+    is_active: bool = True
 
 
 class AthleteUpdate(SQLModel):
