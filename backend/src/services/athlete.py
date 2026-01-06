@@ -104,6 +104,13 @@ class AthleteService(BaseService):
 
     async def create_few_athletes(self, athlete_data: List[AthleteCreate]) -> List[AthleteResponse]:
         """Добавление списка новых спортсменов в БД"""
+        #проверка правильный ли id турнира
+        for data in athlete_data:
+            for t_id in data.tournament_ids:
+                tournament = await self.repository.tournaments.get_tournament_by_id(t_id)
+                if not tournament:
+                    self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
+                    raise TournamentNotFoundException(t_id)
 
         athletes = await self.find_existing_athlete(athlete_data)
 
