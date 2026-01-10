@@ -12,6 +12,7 @@ from backend.src.models.athlete import (
     AthleteUpdate,
 )
 from backend.src.models.athlete_tournament import AthleteTournamentLinkAdd
+from backend.src.models.tournament import TournamentPatch
 from backend.src.services.base import BaseService
 
 
@@ -90,17 +91,7 @@ class AthleteService(BaseService):
         self.logger.info("Добавлена новая связь атлет-турнир")
         self.logger.info("Добавлен новый спортсмен")
 
-        return AthleteResponse(
-            id=athlete.id,
-            fullname=athlete.fullname,
-            points=athlete.points,
-            place=athlete.place,
-            academy=athlete.academy,
-            category=athlete.category,
-            affiliation=athlete.affiliation,
-            is_active=athlete.is_active,
-            tournament_ids=athlete_data.tournament_ids
-        )
+        return AthleteResponse.model_validate(athlete)
 
     async def create_few_athletes(self, athlete_data: List[AthleteCreate]) -> List[AthleteResponse]:
         """Добавление списка новых спортсменов в БД"""
@@ -135,18 +126,17 @@ class AthleteService(BaseService):
 
         self.logger.info("Добавлены новые связи атлет-турнир")
 
-
         return [
             AthleteResponse(
                 id=athlete_db.id,
-                fullname=athlete_add.fullname,
-                category=athlete_add.category,
-                academy=athlete_add.academy,
-                affiliation=athlete_add.affiliation,
-                points=athlete_add.points,
-                place=athlete_db.place if athlete_db.place is not None else "-",
+                fullname=athlete_db.fullname,
+                category=athlete_db.category,
+                academy=athlete_db.academy,
+                affiliation=athlete_db.affiliation,
+                points=athlete_db.points,
+                place=athlete_db.place if athlete_db.place is not None else 0,
                 is_active=athlete_db.is_active,
-                tournament_ids=athlete_add.tournament_ids
+                tournaments=athlete_db.tournaments
             )
             for athlete_add, athlete_db in zip(athlete_data, athletes)
         ]
@@ -164,9 +154,23 @@ class AthleteService(BaseService):
             raise AthleteNotFoundException(athlete_id)
         await self.repository.athletes.calculating_place()
         await self.session.refresh(db_athlete)
+
+        try:
+            # обновляем список турниров, в котором участвовал спортсмен
+            t_ids = [TournamentPatch(id=t_id) for t_id in athlete_data.tournament_ids]
+
+            await self.repository.tournaments.refresh_athletes_tournaments(athlete_id=athlete_id,
+                                                                           tournaments=t_ids)
+        except IntegrityError:
+            self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(athlete_data.tournament_ids))
+            raise TournamentNotFoundException(athlete_data.tournament_ids)
+
+        #берем данные из БД для показа в AthleteResponse
+        updated_athlete = await self.repository.athletes.get_athlete_by_id(athlete_id)
+
         self.logger.info(f"Спортсмен с ID №{athlete_id} успешно обновлён")
 
-        return AthleteResponse.model_validate(db_athlete)
+        return AthleteResponse.model_validate(updated_athlete)
 
     async def soft_del_athlete(self, athlete_id: int) -> dict:
         """Мягкое удаление записи о спортсмене из БД по его ID"""

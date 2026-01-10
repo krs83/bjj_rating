@@ -98,4 +98,5 @@ class BaseRepository:
         self, model: ColumnClauseType[T], *conditions: ColumnExpressionArgument[Any]
     ) -> bool:
         result = await self.session.exec(delete(model).where(*conditions))
+        await self.session.commit()
         return cast(bool, result.rowcount > 0)
