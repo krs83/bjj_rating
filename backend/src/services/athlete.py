@@ -157,10 +157,11 @@ class AthleteService(BaseService):
 
         try:
             # обновляем список турниров, в котором участвовал спортсмен
-            t_ids = [TournamentPatch(id=t_id) for t_id in athlete_data.tournament_ids]
+            if athlete_data.tournament_ids:
+                t_ids = [TournamentPatch(id=t_id) for t_id in athlete_data.tournament_ids]
 
-            await self.repository.tournaments.refresh_athletes_tournaments(athlete_id=athlete_id,
-                                                                           tournaments=t_ids)
+                await self.repository.tournaments.refresh_athletes_tournaments(athlete_id=athlete_id,
+                                                                               tournaments=t_ids)
         except IntegrityError:
             self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(athlete_data.tournament_ids))
             raise TournamentNotFoundException(athlete_data.tournament_ids)
