@@ -3,7 +3,7 @@ include .env.docker
 # ============================================
 # CONFIGURATION
 # ============================================
-IMAGE_NAME = lapelarating:1.3.0
+IMAGE_NAME = lapelarating:1.3.1
 APP_CONTAINER = lapela-container
 DB_CONTAINER = postgres-db
 PG_NAME = $(DB_NAME)
