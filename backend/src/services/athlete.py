@@ -185,10 +185,10 @@ class AthleteService(BaseService):
 
         return {"message": f"Спортсмен с ID №{athlete_id} помечен как неактивный"}
 
-    async def restoring_athlete(self, athlete_id: int) -> dict:
+    async def admin_restoring_athlete(self, athlete_id: int) -> dict:
         """Восстановление записи о спортсмене по его ID"""
 
-        athlete =  await self.repository.athletes.restore_athlete(athlete_id)
+        athlete =  await self.repository.athletes.admin_restore_athlete(athlete_id)
         await self.repository.athletes.calculating_place()
         if not athlete:
             self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(athlete_id))

@@ -114,4 +114,4 @@ async def soft_del_athlete(athlete_service: athlete_serviceDP, athlete_id: int) 
                description="Восстановление записи о спортсмене в БД по ID",
                summary="Restore athlete by ID")
 async def restore_athlete(athlete_service: athlete_serviceDP, athlete_id: int) -> dict:
-    return await athlete_service.restoring_athlete(athlete_id)
+    return await athlete_service.admin_restoring_athlete(athlete_id)

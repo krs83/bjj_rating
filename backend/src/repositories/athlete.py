@@ -49,6 +49,7 @@ class AthleteRepository(BaseRepository):
         return await self._get_many_by_conditions(
             Athlete,
             Athlete.fullname.ilike(f"%{athlete_data}%"),
+                       Athlete.is_active == True
             )
 
     async def create_athlete(self, db_athlete: Athlete) -> Athlete:
@@ -83,8 +84,12 @@ class AthleteRepository(BaseRepository):
             else:
                 return None
 
-    async def restore_athlete(self, athlete_id: int) -> Athlete | None:
-        result = await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
+    async def admin_restore_athlete(self, athlete_id: int) -> Athlete | None:
+        result = await self._get_pk(model=Athlete,
+                                    pk=athlete_id,
+                                    link_model=Athlete.tournaments,
+                                    is_admin=True,
+                                    link=True)
         if result:
             result.is_active = True
             await self.session.commit()
