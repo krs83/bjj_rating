@@ -13,6 +13,7 @@ from backend.src.models.athlete import (
 )
 from backend.src.models.athlete_tournament import AthleteTournamentLinkAdd
 from backend.src.models.tournament import TournamentPatch
+from backend.src.repositories.athlete_tournament_link import AthleteTournamentLinkRepository
 from backend.src.services.base import BaseService
 
 
@@ -62,31 +63,18 @@ class AthleteService(BaseService):
     async def create_athlete(self, athlete_data: AthleteCreate) -> AthleteResponse:
         """Добавление записи в БД о новом спортсмене"""
 
-        #проверка правильный ли id турнира
-        for t_id in athlete_data.tournament_ids:
-            tournament = await self.repository.tournaments.get_tournament_by_id(t_id)
-            if not tournament:
-                self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
-                raise TournamentNotFoundException(t_id)
-
+        # проверка правильный ли id турнира
+        await self.check_tournament_id(athlete_data)
 
         athletes = await self.find_existing_athlete(athlete_data)
         athlete = athletes[0]
 
-        athlete = await self.repository.athletes.create_athlete(athlete)
+        athlete = await self.repository.athletes.add_athlete(athlete)
 
-        try:
-            for t_id in athlete_data.tournament_ids:
+        await self.create_athlete_tournament_link(athlete, athlete_data)
 
-                tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete.id,
-                                                                tournament_id=t_id)
-
-                await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
-                await self.repository.athletes.calculating_place()
-                await self.session.refresh(athlete)
-        except IntegrityError:
-            self.logger.error(AthleteTournamentLinkIntegrityException.ATHLETETOURNAMENTLINKNOTFOUNDTEXT)
-            raise AthleteTournamentLinkIntegrityException()
+        await self.repository.athletes.calculating_place()
+        await self.session.refresh(athlete)
 
         self.logger.info("Добавлена новая связь атлет-турнир")
         self.logger.info("Добавлен новый спортсмен")
@@ -95,36 +83,23 @@ class AthleteService(BaseService):
 
     async def create_few_athletes(self, athlete_data: List[AthleteCreate]) -> List[AthleteResponse]:
         """Добавление списка новых спортсменов в БД"""
-        #проверка правильный ли id турнира
+        # проверка правильный ли id турнира
         for data in athlete_data:
-            for t_id in data.tournament_ids:
-                tournament = await self.repository.tournaments.get_tournament_by_id(t_id)
-                if not tournament:
-                    self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
-                    raise TournamentNotFoundException(t_id)
+            await self.check_tournament_id(data)
 
         athletes = await self.find_existing_athlete(athlete_data)
 
-        await self.repository.athletes.create_few_athletes(athletes)
+        await self.repository.athletes.add_few_athletes(athletes)
 
-        try:
-            for athlete_add, athlete_db in zip(athlete_data, athletes):
-                for t_id in athlete_add.tournament_ids:
+        for athlete_add, athlete_db in zip(athlete_data, athletes):
+            await self.create_athlete_tournament_link(athlete_db, athlete_add)
 
-                    tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete_db.id,
-                                                                tournament_id=t_id)
+            await self.repository.athletes.calculating_place()
 
-                    await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
-                    await self.repository.athletes.calculating_place()
-
-                    for athlete in athletes:
-                        await self.session.refresh(athlete)
-                    self.logger.info("Массовое добавление спортсменов")
-        except IntegrityError:
-            self.logger.error(AthleteTournamentLinkIntegrityException.ATHLETETOURNAMENTLINKNOTFOUNDTEXT)
-            raise AthleteTournamentLinkIntegrityException()
-
-        self.logger.info("Добавлены новые связи атлет-турнир")
+            for athlete in athletes:
+                await self.session.refresh(athlete)
+            self.logger.info("Массовое добавление спортсменов")
+            self.logger.info("Добавлены новые связи атлет-турнир")
 
         return [
             AthleteResponse(
@@ -140,6 +115,27 @@ class AthleteService(BaseService):
             )
             for athlete_add, athlete_db in zip(athlete_data, athletes)
         ]
+    async def create_athlete_tournament_link(self,
+                                             athletes: Athlete | list[Athlete],
+                                             athlete_data: AthleteCreate) -> None:
+        for t_id in athlete_data.tournament_ids:
+
+            tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athletes.id,
+                                                            tournament_id=t_id)
+
+            repo = AthleteTournamentLinkRepository(session=self.session)
+            existing = await repo.select_athlete_tournament_links_by_id(athlete_id=athletes.id)
+            if not existing:
+                await self.repository.athlete_tournament_links.insert_athlete_tournament_link(tournament_link_data)
+                await self.repository.athletes.calculating_place()
+                await self.session.refresh(athletes)
+
+    async def check_tournament_id(self, data):
+        for t_id in data.tournament_ids:
+            tournament = await self.repository.tournaments.get_tournament_by_id(t_id)
+            if not tournament:
+                self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
+                raise TournamentNotFoundException(t_id)
 
     async def part_update_athlete(self, athlete_id: int, athlete_data: AthleteUpdate) -> AthleteResponse:
         """Частичное или полное обновление данных о спортсмене по его ID"""
