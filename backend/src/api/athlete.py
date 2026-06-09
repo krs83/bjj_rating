@@ -73,7 +73,7 @@ async def search_athlete_by_name(
              response_model=AthleteResponse,
              description="Добавление записи о спортсмене в БД",
              summary="Add athlete to DB")
-async def add_athlete(
+async def post_athlete(
     athlete_service: athlete_serviceDP, athlete_data: AthleteCreate
 ) -> AthleteBase:
     return await athlete_service.create_athlete(athlete_data)
@@ -84,7 +84,7 @@ async def add_athlete(
              response_model=List[AthleteResponse],
              description="Добавление списка записей о спортсменах в БД",
              summary="Add athletes list to DB")
-async def add_few_athletes(
+async def post_few_athletes(
         athlete_service: athlete_serviceDP, athlete_data: List[AthleteCreate]
 ) -> List[AthleteResponse]:
     return await athlete_service.create_few_athletes(athlete_data)

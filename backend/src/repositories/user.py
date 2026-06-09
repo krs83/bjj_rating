@@ -8,13 +8,13 @@ from backend.src.repositories.base import BaseRepository
 class UserRepository(BaseRepository):
 
     async def get_users(self, offset: int, limit: int) -> list[User]:
-        return await self._get_many(model=User, offset=offset, limit=limit)
+        return await self._select_many(model=User, offset=offset, limit=limit)
 
     async def get_user_by_id(self, user_id: int) -> User:
-        return await self._get_pk(model=User, pk=user_id)
+        return await self._select_pk(model=User, pk=user_id)
 
     async def get_user_by_email(self, user_email: EmailStr) -> User:
-        return await self._get_one(User, User.email == user_email)
+        return await self._select_one(User, User.email == user_email)
 
     async def create_user(self, db_user: User) -> User:
         self.session.add(db_user)

@@ -16,13 +16,13 @@ class TournamentRepository(BaseRepository):
                            limit: int,
                            order_by=asc(Tournament.smoothcomp_date)) ->list[Tournament]:
 
-        result = await self._get_many(
+        result = await self._select_many(
             model=Tournament, offset=offset, limit=limit, order_by=order_by
         )
         return result
 
     async def get_tournament_by_id(self, tournament_id: int) -> Tournament:
-        return await self._get_pk(model=Tournament, pk=tournament_id)
+        return await self._select_pk(model=Tournament, pk=tournament_id)
 
 
     async def create_tournament(self, db_tournament: Tournament) -> Tournament:
@@ -49,10 +49,10 @@ class TournamentRepository(BaseRepository):
     async def refresh_athletes_tournaments(self, athlete_id: int, tournaments: list[TournamentPatch]) -> None:
 
         new_tournaments_ids = {t.id for t in tournaments}
-        current_tournaments_ids = await self._get_pk(model=Athlete,
-                                                     pk=athlete_id,
-                                                     link_model=Athlete.tournaments,
-                                                     link=True)
+        current_tournaments_ids = await self._select_pk(model=Athlete,
+                                                        pk=athlete_id,
+                                                        link_model=Athlete.tournaments,
+                                                        link=True)
         current_tournaments_ids = {i.id for i in current_tournaments_ids.tournaments}
 
         to_remove = current_tournaments_ids - new_tournaments_ids
@@ -68,4 +68,4 @@ class TournamentRepository(BaseRepository):
                 tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete_id,
                                                                 tournament_id=t_id)
                 repo = AthleteTournamentLinkRepository(session=self.session)
-                await repo.create_athlete_tournament_link(tournament_link_data)
+                await repo.insert_athlete_tournament_link(tournament_link_data)

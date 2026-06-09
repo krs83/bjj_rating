@@ -7,17 +7,24 @@ from backend.src.repositories.base import BaseRepository
 
 class AthleteTournamentLinkRepository(BaseRepository):
 
-    async def get_athlete_tournament_links(self,
-                              offset: int,
-                              limit: int,
-                              order_by=asc(AthleteTournamentLink.athlete_id)) ->list[AthleteTournamentLink]:
+    async def select_athlete_tournament_links_by_id(self, athlete_id: int) ->list[AthleteTournamentLink]:
 
-        result = await self._get_many(
+        result = await self._select_many(
+            model=AthleteTournamentLink, conditions=[AthleteTournamentLink.athlete_id == athlete_id]
+        )
+        return result
+
+    async def select_all_tournament_links(self,
+                                          offset: int,
+                                          limit: int,
+                                          order_by=asc(AthleteTournamentLink.athlete_id)) ->list[AthleteTournamentLink]:
+
+        result = await self._select_many(
             model=AthleteTournamentLink, offset=offset, limit=limit, order_by=order_by
         )
         return result
 
-    async def create_athlete_tournament_link(self,
+    async def insert_athlete_tournament_link(self,
                                              athlete_tournament_link_data: AthleteTournamentLinkAdd) -> AthleteTournamentLink:
         link = AthleteTournamentLink.model_validate(athlete_tournament_link_data)
         self.session.add(link)

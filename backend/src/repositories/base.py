@@ -15,26 +15,26 @@ class BaseRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def _get_one(
+    async def _select_one(
         self, model: ColumnClauseType[T], *conditions: ColumnExpressionArgument[Any]
     ) -> T | None:
         query = select(model).where(*conditions)
         result = await self.session.exec(query)
         return result.first()
 
-    async def _get_many_by_conditions(
+    async def _select_many_by_conditions(
             self, model: ColumnClauseType[T], *conditions: ColumnExpressionArgument[Any]
     ) -> T | None:
         query = select(model).where(*conditions)
         result = await self.session.exec(query)
         return result.all()
 
-    async def _get_pk(self,
-                      model: ColumnClauseType[T],
-                      pk: int,
-                      link_model: ColumnClauseType[T] | None = None,
-                      link: bool = False,
-                      is_admin=False) -> T | None:
+    async def _select_pk(self,
+                         model: ColumnClauseType[T],
+                         pk: int,
+                         link_model: ColumnClauseType[T] | None = None,
+                         link: bool = False,
+                         is_admin=False) -> T | None:
 
         if not link:
             return await self.session.get(model, pk)
@@ -50,7 +50,7 @@ class BaseRepository:
         result = await self.session.exec(query)
         return result.first()
 
-    async def _get_many(
+    async def _select_many(
         self,
         model: ColumnClauseType[T],
         conditions: list[Any] | None = None,
@@ -87,7 +87,7 @@ class BaseRepository:
         pk: int,
         extra: dict[str, Any] | None = None,
     ) -> T | None:
-        obj = await self._get_pk(model, pk)
+        obj = await self._select_pk(model, pk)
         if obj is not None:
             obj.sqlmodel_update(model_data, update=extra)
             self.session.add(obj)
