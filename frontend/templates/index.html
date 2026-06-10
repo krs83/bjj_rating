@@ -4,22 +4,49 @@
 
 {% block content %}
 
+<style>
+    .jumbotron-adaptive {
+        background-repeat: no-repeat;
+        background-attachment: local;
+        background-position: center 25%;
+        transition: all 0.3s ease;
+    }
+
+    @media (min-width: 1360px) {
+        .jumbotron-adaptive {
+            background-image: url('{{ header_image }}');
+            background-size: cover;
+            min-height: 500px;
+            padding: 5rem;
+        }
+    }
+
+    @media (max-width: 1359px) {
+        .jumbotron-adaptive {
+            background-image: url('{{ header_image_mobile|default(header_image) }}');
+            width: 100%;
+            height: auto;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #1a1a2e;
+            min-height: 280px;
+            padding: 2rem 1.5rem;
+        }
+    }
+</style>
+
 <div class="row">
     <div class="col-12">
-        <div class="jumbotron text-white p-5 rounded mb-4 position-relative"
-             style="
-                    background: url('{{ header_image }}') no-repeat center 25%;
-                    background-size: cover;
-                    background-attachment: local;">
+        <div class="jumbotron-adaptive text-white rounded mb-4 position-relative">
         </div>
     </div>
 </div>
 
-<!-- Топ-25 спортсменов -->
+<!-- Топ-10 спортсменов -->
 <div class="row">
     <div class="col-12">
         <h2 class="mb-4"><i class="fas fa-crown"></i> Топ-10 спортсменов</h2>
-
 
         {% include "components/search.html" %}
 
@@ -37,7 +64,5 @@
         </div>
     </div>
 </div>
-
-
 
 {% endblock %}
