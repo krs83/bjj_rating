@@ -22,7 +22,7 @@ from backend.src.admin.setup import setup_admin
 from backend.src.config import settings
 from backend.src.exceptions.core import not_found_error, validation_exception_handler
 
-app = FastAPI(title=settings.SITENAME, version="1.3.0")
+app = FastAPI(title=settings.SITENAME, version="1.3.5")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
