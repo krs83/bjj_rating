@@ -154,13 +154,12 @@ help:
 CUSTOMER_CONTAINER = lapela-customer
 CUSTOMER_DB = lapelarating_customer
 
-# Создать копию БД
 copy-db:
-	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -c "DROP DATABASE IF EXISTS $(CUSTOMER_DB);"
-	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -c "CREATE DATABASE $(CUSTOMER_DB) WITH TEMPLATE $(DB_NAME);"
-	@echo "✅ Копия БД $(CUSTOMER_DB) создана из $(DB_NAME)"
+	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$(DB_NAME)';"
+	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -d postgres -c "DROP DATABASE IF EXISTS $(CUSTOMER_DB);"
+	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -d postgres -c "CREATE DATABASE $(CUSTOMER_DB) WITH TEMPLATE $(DB_NAME);"
+	@echo "✅ Копия БД $(CUSTOMER_DB) создана"
 
-# Запустить контейнер
 run-customer:
 	docker run -d \
 		--name $(CUSTOMER_CONTAINER) \
@@ -175,12 +174,9 @@ run-customer:
 		$(IMAGE_NAME)
 	@echo "✅ Контейнер $(CUSTOMER_CONTAINER) запущен"
 
-# Остановить preview-версию
 stop-customer:
-	docker rm -f $(CUSTOMER_CONTAINER)
-	@echo "✅ Контейнер $(CUSTOMER_CONTAINER) остановлен"
+	docker rm -f $(CUSTOMER_CONTAINER) 2>/dev/null || true
 
-# Полный запуск preview-версии (копия БД + контейнер)
 preview: copy-db run-customer
 	@echo "========================================="
 	@echo "✅ Preview версия запущена:"
