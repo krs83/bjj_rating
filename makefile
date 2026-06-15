@@ -148,3 +148,42 @@ help:
 	@echo "make migrate       - Выполнить миграции БД"
 	@echo "make checkssl      - Проверить SSL сертификат"
 
+# ============================================
+# CUSTOMER PREVIEW MODE
+# ============================================
+CUSTOMER_CONTAINER = lapela-customer
+CUSTOMER_DB = lapelarating_customer
+
+# Создать копию БД
+copy-db:
+	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -c "DROP DATABASE IF EXISTS $(CUSTOMER_DB);"
+	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -c "CREATE DATABASE $(CUSTOMER_DB) WITH TEMPLATE $(DB_NAME);"
+	@echo "✅ Копия БД $(CUSTOMER_DB) создана из $(DB_NAME)"
+
+# Запустить контейнер
+run-customer:
+	docker run -d \
+		--name $(CUSTOMER_CONTAINER) \
+		--network $(NETWORK) \
+		--restart unless-stopped \
+		--env-file .env.customer \
+		--label "traefik.enable=true" \
+		--label "traefik.http.routers.$(CUSTOMER_CONTAINER).rule=Host(\`preview.$(DOMAIN)\`)" \
+		--label "traefik.http.routers.$(CUSTOMER_CONTAINER).entrypoints=websecure" \
+		--label "traefik.http.routers.$(CUSTOMER_CONTAINER).tls.certresolver=letsencrypt" \
+		--label "traefik.http.services.$(CUSTOMER_CONTAINER).loadbalancer.server.port=8000" \
+		$(IMAGE_NAME)
+	@echo "✅ Контейнер $(CUSTOMER_CONTAINER) запущен"
+
+# Остановить preview-версию
+stop-customer:
+	docker rm -f $(CUSTOMER_CONTAINER)
+	@echo "✅ Контейнер $(CUSTOMER_CONTAINER) остановлен"
+
+# Полный запуск preview-версии (копия БД + контейнер)
+preview: copy-db run-customer
+	@echo "========================================="
+	@echo "✅ Preview версия запущена:"
+	@echo "   https://preview.$(DOMAIN)"
+	@echo "   База: $(CUSTOMER_DB)"
+	@echo "========================================="
