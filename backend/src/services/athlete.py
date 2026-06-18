@@ -76,9 +76,6 @@ class AthleteService(BaseService):
         await self.repository.athletes.calculating_place()
         await self.session.refresh(athlete)
 
-        self.logger.info("Добавлена новая связь атлет-турнир")
-        self.logger.info("Добавлен новый спортсмен")
-
         return AthleteResponse.model_validate(athlete)
 
     async def create_few_athletes(self, athlete_data: List[AthleteCreate]) -> List[AthleteResponse]:
@@ -98,8 +95,6 @@ class AthleteService(BaseService):
 
             for athlete in athletes:
                 await self.session.refresh(athlete)
-            self.logger.info("Массовое добавление спортсменов")
-            self.logger.info("Добавлены новые связи атлет-турнир")
 
         return [
             AthleteResponse(
@@ -207,10 +202,10 @@ class AthleteService(BaseService):
         list_athletes = []
         for athlete_data in athletes_data:
             await self.extract_discipline(athlete_data)
+            self.logger.info(f"Дисциплина спортсмена отмечена как  {athlete_data.discipline} ")
             athlete = await self.repository.athletes.get_athlete_by_conditions(athlete_data)
 
             if athlete:
-                await self.extract_discipline(athlete_data)
                 athlete.points += athlete_data.points
                 list_athletes.append(athlete)
                 self.logger.info(f"Баллы спортсмена обновлены - {athlete.points} ")
@@ -218,17 +213,20 @@ class AthleteService(BaseService):
             else:
                 new_athlete = Athlete.model_validate(athlete_data)
                 list_athletes.append(new_athlete)
+                self.logger.info("Добавлена новая связь атлет-турнир")
+                self.logger.info("Добавлен новый спортсмен")
 
         return list_athletes
 
-    @staticmethod
-    async def extract_discipline(athlete_data) -> None:
+    async def extract_discipline(self, athlete_data) -> None:
         if "NO-GI" in athlete_data.category:
             athlete_data.discipline = "NO-GI"
         elif "GI" in athlete_data.category:
             athlete_data.discipline = "GI"
         else:
             athlete_data.discipline = "-"
+            self.logger.info(f"Дисциплина спортсмена неопределена")
+
 
 
 
