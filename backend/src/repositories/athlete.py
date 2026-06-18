@@ -38,8 +38,6 @@ class AthleteRepository(BaseRepository):
                                      is_admin=True)
 
     async def get_athlete_by_conditions(self, athlete_data: AthleteCreate) -> Athlete:
-        print(f"from get_athlete_by_conditions {athlete_data=}")
-
         return await self._select_one(
             Athlete,
             Athlete.fullname == athlete_data.fullname,
