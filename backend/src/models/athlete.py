@@ -1,6 +1,4 @@
-from typing import TYPE_CHECKING
-
-from enum import Enum
+from typing import TYPE_CHECKING, Literal
 
 from sqlmodel import Field, SQLModel, String, Relationship
 
@@ -11,15 +9,10 @@ if TYPE_CHECKING:
     from backend.src.models import Tournament
 
 
-class Discipline(str, Enum):
-    GI = "GI"
-    NO_GI = "NO-GI"
-
-
 class AthleteBase(SQLModel):
     fullname: str = Field(String(50), index=True, nullable=False)
     category: str = Field(String(50), index=True, nullable=False)
-    discipline: str = Field(default=Discipline.GI, index=True, nullable=False)
+    discipline: str = Field(default="GI", index=True, nullable=False)
     academy: str = Field(String(50), index=True, nullable=True)
     affiliation: str = Field(String(50), nullable=True)
     points: int = Field(index=True, default=0, ge=0)
@@ -51,7 +44,7 @@ class AthleteCreate(AthleteBase):
 class AthleteUpdate(SQLModel):
     fullname: str | None = None
     category: str | None = None
-    discipline: Discipline | None = None
+    discipline: Literal["GI", "NO-GI"] | None = None
     affiliation: str | None = None
     points: int | None = None
     tournament_ids: list[int] | None = None

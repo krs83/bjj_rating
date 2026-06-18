@@ -11,7 +11,6 @@ import sqlmodel
 from alembic import op
 import sqlalchemy as sa
 
-from backend.src.models.athlete import Discipline
 
 # revision identifiers, used by Alembic.
 revision: str = '7107c757da66'
@@ -24,7 +23,7 @@ def upgrade() -> None:
     """Upgrade schema."""
     op.add_column('athlete', sa.Column('discipline',
                                        sqlmodel.sql.sqltypes.AutoString(),
-                                       server_default=Discipline.GI.value,
+                                       server_default="GI",
                                        nullable=False))
     op.create_index(op.f('ix_athlete_discipline'), 'athlete', ['discipline'], unique=False)
 

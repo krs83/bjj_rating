@@ -106,6 +106,7 @@ class AthleteService(BaseService):
                 id=athlete_db.id,
                 fullname=athlete_db.fullname,
                 category=athlete_db.category,
+                discipline=athlete_db.discipline,
                 academy=athlete_db.academy,
                 affiliation=athlete_db.affiliation,
                 points=athlete_db.points,
@@ -205,10 +206,11 @@ class AthleteService(BaseService):
 
         list_athletes = []
         for athlete_data in athletes_data:
-
+            await self.extract_discipline(athlete_data)
             athlete = await self.repository.athletes.get_athlete_by_conditions(athlete_data)
 
             if athlete:
+                await self.extract_discipline(athlete_data)
                 athlete.points += athlete_data.points
                 list_athletes.append(athlete)
                 self.logger.info(f"Баллы спортсмена обновлены - {athlete.points} ")
@@ -218,6 +220,15 @@ class AthleteService(BaseService):
                 list_athletes.append(new_athlete)
 
         return list_athletes
+
+    @staticmethod
+    async def extract_discipline(athlete_data) -> None:
+        if "NO-GI" in athlete_data.category:
+            athlete_data.discipline = "NO-GI"
+        elif "GI" in athlete_data.category:
+            athlete_data.discipline = "GI"
+        else:
+            athlete_data.discipline = "-"
 
 
 
