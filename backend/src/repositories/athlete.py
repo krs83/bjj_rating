@@ -41,6 +41,7 @@ class AthleteRepository(BaseRepository):
         return await self._select_one(
             Athlete,
             Athlete.fullname == athlete_data.fullname,
+            Athlete.academy == athlete_data.academy,
             Athlete.discipline == athlete_data.discipline,
         )
 

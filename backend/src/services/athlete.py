@@ -191,7 +191,7 @@ class AthleteService(BaseService):
 
 
     async def find_existing_athlete(self, athletes_data: AthleteCreate | List[AthleteCreate]) -> List[Athlete]:
-        """Если будет совпадение по имени, ДР и региону, новый спортсмен не добавляется\n
+        """Если будет совпадение по имени и академии, новый спортсмен не добавляется\n
        Только суммируются баллы\n
         В противном случае - добавляется новый спортсмен
         """
@@ -204,9 +204,9 @@ class AthleteService(BaseService):
             await self.extract_discipline(athlete_data)
             self.logger.info(f"Дисциплина спортсмена отмечена как  {athlete_data.discipline} ")
             athlete = await self.repository.athletes.get_athlete_by_conditions(athlete_data)
-
             if athlete:
                 athlete.points += athlete_data.points
+                athlete.category = athlete_data.category
                 list_athletes.append(athlete)
                 self.logger.info(f"Баллы спортсмена обновлены - {athlete.points} ")
 
@@ -219,9 +219,11 @@ class AthleteService(BaseService):
         return list_athletes
 
     async def extract_discipline(self, athlete_data) -> None:
-        if "NO-GI" in athlete_data.category:
+        lower_athlete_data = athlete_data.category.lower()
+
+        if "no-gi" in lower_athlete_data or "nogi" in lower_athlete_data:
             athlete_data.discipline = "NO-GI"
-        elif "GI" in athlete_data.category:
+        elif "gi" in lower_athlete_data:
             athlete_data.discipline = "GI"
         else:
             athlete_data.discipline = "-"
