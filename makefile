@@ -154,6 +154,10 @@ help:
 CUSTOMER_CONTAINER = lapela-customer
 CUSTOMER_DB = lapelarating_customer
 
+# Собрать preview образ
+build-preview:
+	docker build -t lapelarating:preview .
+
 copy-db:
 	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$(DB_NAME)';"
 	docker exec $(DB_CONTAINER) psql -U $(DB_USER) -d postgres -c "DROP DATABASE IF EXISTS $(CUSTOMER_DB);"
@@ -171,7 +175,7 @@ run-customer:
 		--label "traefik.http.routers.$(CUSTOMER_CONTAINER).entrypoints=websecure" \
 		--label "traefik.http.routers.$(CUSTOMER_CONTAINER).tls.certresolver=letsencrypt" \
 		--label "traefik.http.services.$(CUSTOMER_CONTAINER).loadbalancer.server.port=8000" \
-		$(IMAGE_NAME)
+		lapelarating:preview
 	@echo "✅ Контейнер $(CUSTOMER_CONTAINER) запущен"
 
 stop-customer:
@@ -182,4 +186,12 @@ preview: copy-db run-customer
 	@echo "✅ Preview версия запущена:"
 	@echo "   https://preview.$(DOMAIN)"
 	@echo "   База: $(CUSTOMER_DB)"
+	@echo "========================================="
+
+# Обновить код без пересоздания БД
+update-preview: build-preview stop-customer run-customer
+	docker exec $(CUSTOMER_CONTAINER) alembic upgrade head
+	@echo "========================================="
+	@echo "✅ Код обновлён, БД осталась прежней"
+	@echo "   https://preview.$(DOMAIN)"
 	@echo "========================================="
