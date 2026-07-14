@@ -14,6 +14,15 @@ class AthleteTournamentLinkRepository(BaseRepository):
         )
         return result
 
+    async def select_athlete_id_and_tournament_id(self,
+                                                  athlete_id: int,
+                                                  tournament_id: int) -> AthleteTournamentLink:
+        """Проверяет, существует ли связь спортсмена с турниром"""
+        return await self._select_one(
+            AthleteTournamentLink,
+            AthleteTournamentLink.athlete_id == athlete_id,
+            AthleteTournamentLink.tournament_id == tournament_id)
+
     async def select_all_tournament_links(self,
                                           offset: int,
                                           limit: int,

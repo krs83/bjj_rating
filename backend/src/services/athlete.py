@@ -116,12 +116,13 @@ class AthleteService(BaseService):
                                              athlete_data: AthleteCreate) -> None:
         for t_id in athlete_data.tournament_ids:
 
-            tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athletes.id,
-                                                            tournament_id=t_id)
 
             repo = AthleteTournamentLinkRepository(session=self.session)
-            existing = await repo.select_athlete_tournament_links_by_id(athlete_id=athletes.id)
-            if not existing:
+            existing_link = await repo.select_athlete_id_and_tournament_id(athlete_id=athletes.id,
+                                                                      tournament_id=t_id)
+            if not existing_link:
+                tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athletes.id,
+                                                                tournament_id=t_id)
                 await self.repository.athlete_tournament_links.insert_athlete_tournament_link(tournament_link_data)
                 await self.repository.athletes.calculating_place()
                 await self.session.refresh(athletes)
